@@ -8,11 +8,6 @@ labels: bug
 ## Description
 <!-- Brief description of the bug -->
 
-## Environment
-- Browser: 
-- OS: 
-- Model: 
-
 ## Steps to Reproduce
 1. 
 2. 
