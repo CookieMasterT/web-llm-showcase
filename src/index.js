@@ -1,4 +1,4 @@
-import * as webllm from "./web-llm-unlocked/lib/index.js";
+import * as webllm from "../web-llm-unlocked/lib/index.js";
 
 /*************** WebLLM logic ***************/
 const messages = [
