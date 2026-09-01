@@ -1,0 +1,3 @@
+[submodule "web-llm-unlocked"]
+	path = web-llm-unlocked
+	url = https://github.com/CookieMasterT/web-llm-unlocked.git

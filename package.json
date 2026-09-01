@@ -1,0 +1,11 @@
+{
+  "name": "web-llm-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prepare": "cd web-llm-unlocked && npm install && npm run build"
+  },
+  "dependencies": {
+    "web-llm-unlocked": "file:./web-llm-unlocked"
+  }
+}
