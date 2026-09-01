@@ -29,4 +29,12 @@ Run the install command from the root directory:
 ```bash
 npm install
 ```
-The command will automatically install the dependencies of web-llm-unlocked, and build it.
+This will automatically install dependencies and build the `web-llm-unlocked` submodule.
+
+## Running the Application
+
+Start the local development server:
+```bash
+npm start
+```
+Then open your browser and navigate to `http://localhost:3000/src/` (or the URL displayed in the terminal) to use the showcase.

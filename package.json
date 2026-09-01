@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "start": "serve .",
     "prepare": "cd web-llm-unlocked && npm install && npm run build"
   },
   "dependencies": {
     "web-llm-unlocked": "file:./web-llm-unlocked"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6"
   }
 }
