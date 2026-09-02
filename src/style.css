@@ -72,7 +72,7 @@ html {
 }
 
 .hidden {
-    display: none !important;
+    display: none;
 }
 
 /* Setup View */

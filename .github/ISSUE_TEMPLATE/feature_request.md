@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: Suggest an improvement
-title: "[FEATURE] "
+title: "\[FEATURE\] "
 labels: enhancement
 ---
 
@@ -12,8 +12,9 @@ labels: enhancement
 <!-- Why would this be useful? -->
 
 ## Acceptance Criteria
-- [ ] 
-- [ ] 
+- [ ] Criteria 1
+- [ ] Criteria 2
+- [ ] Criteria 3
 
 ## Related Issues
 <!-- Any related issues or PRs? -->
