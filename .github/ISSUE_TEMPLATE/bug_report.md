@@ -1,7 +1,7 @@
 ---
 name: Bug Report
 about: Report a problem with the web-llm-showcase
-title: "\[BUG\] "
+title: "[BUG] "
 labels: bug
 ---
 

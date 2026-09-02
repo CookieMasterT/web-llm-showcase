@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: Suggest an improvement
-title: "\[FEATURE\] "
+title: "[FEATURE] "
 labels: enhancement
 ---
 
