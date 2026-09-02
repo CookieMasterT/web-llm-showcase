@@ -9,85 +9,85 @@
 </head>
 
 <body>
-<div class="app-container">
+<section class="app-container">
     <!-- Sidebar Navigation -->
-    <div class="sidebar">
+    <section class="sidebar">
         <button id="nav-setup" class="nav-btn active">Setup</button>
         <button id="nav-chat" class="nav-btn" disabled title="Please download a model first">Chat</button>
         <button id="nav-insights" class="nav-btn" disabled>Insights</button>
-    </div>
+    </section>
 
     <!-- Main Workspace Area -->
-    <div class="workspace">
+    <section class="workspace">
         
         <!-- SETUP VIEW -->
-        <div id="setup-view" class="view-panel">
+        <section id="setup-view" class="view-panel">
             <h2>Step 1: Initialize WebLLM and Download Model</h2>
-            <div class="download-container">
+            <section class="download-container">
                 <input type="text" id="model-search" placeholder="Search model..." style="padding: 10px; background-color: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px;" />
                 <select id="model-selection"></select>
                 <button id="download">Download</button>
-            </div>
+            </section>
             <p id="download-status" class="hidden"></p>
-        </div>
+        </section>
 
         <!-- CHAT VIEW -->
-        <div id="chat-view" class="view-panel hidden">
-            <div class="chat-workspace">
+        <section id="chat-view" class="view-panel hidden">
+            <section class="chat-workspace">
                 
                 <!-- Left Pane: Inference Controls and Chat -->
-                <div class="chat-left-pane">
-                    <div class="inference-controls">
-                        <div class="play-controls">
+                <section class="chat-left-pane">
+                    <section class="inference-controls">
+                        <section class="play-controls">
                             <button id="pause-btn">PAUSE</button>
                             <button id="stop-btn">STOP</button>
                             <button id="reset-btn">RESET</button>
-                        </div>
-                        <div class="speed-control">
+                        </section>
+                        <section class="speed-control">
                             <label>GENERATION SPEED</label>
-                            <div class="slider-container">
+                            <section class="slider-container">
                                 <span>Faster</span>
                                 <input type="range" id="speed-slider" min="0" max="1000" step="50" value="0" />
                                 <span>Slower</span>
-                            </div>
-                        </div>
-                    </div>
+                            </section>
+                        </section>
+                    </section>
 
-                    <div class="chat-box" id="chat-box">
-                        <div class="system-prompt-box">System Prompt: You are a helpful AI agent helping users.</div>
-                    </div>
+                    <section class="chat-box" id="chat-box">
+                        <section class="system-prompt-box">System Prompt: You are a helpful AI agent helping users.</section>
+                    </section>
 
-                    <div class="chat-input-container">
+                    <section class="chat-input-container">
                         <input type="text" id="user-input" placeholder="Send a message..." />
                         <button id="send" disabled>Send</button>
-                    </div>
-                </div>
+                    </section>
+                </section>
 
                 <!-- Right Pane: Token Diagnostics -->
-                <div class="diagnostics-pane">
+                <section class="diagnostics-pane">
                     <h3>Token Diagnostics</h3>
-                    <div class="diagnostics-columns">
+                    <section class="diagnostics-columns">
                         
                         <!-- Diagnostic Left: Chosen & Special Tokens -->
-                        <div class="diag-left-col">
-                            <div class="diag-section">
+                        <section class="diag-left-col">
+                            <section class="diag-section">
                                 <h4>Chosen Tokens</h4>
-                                <div class="inference-inputs">
-                                    <div class="input-item">
+                                <section class="inference-inputs">
+                                    <section class="input-item">
                                         <label for="temp-input">Temperature</label>
                                         <input type="number" id="temp-input" min="0.0" max="5.0" step="0.1" value="1.0" />
-                                    </div>
-                                    <div class="input-item">
+                                    </section>
+                                    <section class="input-item">
                                         <label for="topp-input">Top-P</label>
                                         <input type="number" id="topp-input" min="0.0" max="1.0" step="0.05" value="1.0" />
-                                    </div>
-                                </div>
-                                <div id="chosen-tokens-display" class="chosen-tokens-box">
+                                    </section>
+                                </section>
+                                <section id="chosen-tokens-display" class="chosen-tokens-box">
                                     As text is generated here, new tokens appear...
-                                </div>
-                            </div>
+                                </section>
+                            </section>
 
-                            <div class="diag-section">
+                            <section class="diag-section">
                                 <h4>Special Tokens</h4>
                                 <ul class="special-tokens-list">
                                     <li>
@@ -107,36 +107,36 @@
                                         <span class="info-icon" title="``` starts or ends a formatted code block in Markdown.">ⓘ</span>
                                     </li>
                                 </ul>
-                            </div>
-                        </div>
+                            </section>
+                        </section>
 
                         <!-- Diagnostic Right: Probabilities -->
-                        <div class="diag-right-col">
+                        <section class="diag-right-col">
                             <h4>Probability Distributions</h4>
                             <p class="diag-sub">Top-10 for current token</p>
                             
-                            <div class="prob-header-row">
+                            <section class="prob-header-row">
                                 <span class="header-tok">Token</span>
                                 <span class="header-chance">Unnormalized<br/>Chance</span>
                                 <span class="header-chance">Chance to Pick<br/>(Temp/Top-P)</span>
-                            </div>
-                            <div id="probabilities-chart"></div>
-                        </div>
+                            </section>
+                            <section id="probabilities-chart"></section>
+                        </section>
 
-                    </div>
-                </div>
+                    </section>
+                </section>
 
-            </div>
-        </div>
+            </section>
+        </section>
 
         <!-- INSIGHTS VIEW -->
-        <div id="insights-view" class="view-panel hidden">
+        <section id="insights-view" class="view-panel hidden">
             <h2>Insights Panel</h2>
             <p>This is a placeholder for the tokenizer insights and statistics dashboard.</p>
-        </div>
+        </section>
 
-    </div>
-</div>
+    </section>
+</section>
 
 <script type="importmap">
     {
