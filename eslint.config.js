@@ -13,6 +13,7 @@ export default defineConfig([
       "**/dist/**",
       "web-llm-unlocked/**",
       "**/.git/**",
+      "**/.github/**",
     ],
   },
   {
