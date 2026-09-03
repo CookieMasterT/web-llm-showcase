@@ -2,21 +2,33 @@ export function calculateProbabilities(topLogprobs, finalTemp, finalTopP) {
   // 1. Sort by raw logprob descending
   const sorted = [...topLogprobs].sort((a, b) => b.logprob - a.logprob);
 
-  // 2. Compute Unnormalized Chance percentages
-  const rawSum = sorted.reduce((acc, x) => acc + Math.exp(x.logprob), 0);
-  const withRawChance = sorted.map((item) => {
-    const chance = rawSum > 0 ? (Math.exp(item.logprob) / rawSum) * 100 : 0;
+  // 2. Compute Unnormalized Chance percentages (reconstructed for default temperature T = 1.0)
+  // Backend logprobs already have finalTemp applied. To recover default temperature logits,
+  // we multiply logprob by finalTemp. When finalTemp <= 0.05, sampling was greedy.
+  const rawWeights = sorted.map((item, idx) => {
+    if (finalTemp == 0) {
+      return idx === 0 ? 1.0 : 0.0;
+    }
+    const logprob = Number.isFinite(item.logprob) ? item.logprob : -Infinity;
+    return Math.exp(logprob * finalTemp);
+  });
+  const rawSum = rawWeights.reduce((acc, w) => acc + w, 0);
+  const withRawChance = sorted.map((item, idx) => {
+    const chance = rawSum > 0 ? (rawWeights[idx] / rawSum) * 100 : 0;
     return { ...item, rawChance: chance };
   });
 
   // 3. Compute Chance to Pick (affected by Temp & Top-P)
-  let adjusted = sorted.map((item) => {
-    let weight = finalTemp <= 0.05 ? 0 : Math.exp(item.logprob / finalTemp);
+  // Backend logprobs already reflect finalTemp, so we do not divide by finalTemp again.
+  let adjusted = sorted.map((item, idx) => {
+    let weight;
+    if (finalTemp <= 0.05) {
+      weight = idx === 0 ? 1.0 : 0.0;
+    } else {
+      weight = Number.isFinite(item.logprob) ? Math.exp(item.logprob) : 0.0;
+    }
     return { ...item, weight };
   });
-  if (finalTemp <= 0.05 && adjusted.length > 0) {
-    adjusted[0].weight = 1.0;
-  }
 
   const adjSum = adjusted.reduce((acc, x) => acc + x.weight, 0);
   adjusted.forEach((item) => {
@@ -35,6 +47,9 @@ export function calculateProbabilities(topLogprobs, finalTemp, finalTopP) {
     }
     cumSum += item.temp_prob;
   });
+  if (insideTopP.length === 0 && adjusted.length > 0) {
+    insideTopP.push(adjusted[0]);
+  }
 
   // Re-normalize top-p candidates
   const finalSum = insideTopP.reduce((acc, x) => acc + x.temp_prob, 0);
