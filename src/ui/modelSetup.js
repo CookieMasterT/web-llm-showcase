@@ -26,10 +26,12 @@ export function populateModels(filterQuery = "") {
 }
 
 export function initModelSetup() {
-  // Initial populate
-  populateModels();
+  const modelSearch = document.getElementById("model-search");
 
-  document.getElementById("model-search").addEventListener("input", (e) => {
+  // Initial populate, using the search query when it is not empty.
+  populateModels(modelSearch.value);
+
+  modelSearch.addEventListener("input", (e) => {
     populateModels(e.target.value);
   });
 

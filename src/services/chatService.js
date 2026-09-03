@@ -33,7 +33,7 @@ export async function streamingGenerating(
         break;
       }
 
-      // Check if paused
+      // Check if paused, then wait until unpaused or stopped.
       while (state.isPaused && !state.isStopped) {
         await new Promise((resolve) => setTimeout(resolve, 50));
       }
@@ -50,6 +50,7 @@ export async function streamingGenerating(
         await new Promise((resolve) => setTimeout(resolve, speedDelay));
       }
 
+      // Check again, incase the user paused during the speed delay
       while (state.isPaused && !state.isStopped) {
         await new Promise((resolve) => setTimeout(resolve, 50));
       }
@@ -58,6 +59,7 @@ export async function streamingGenerating(
         break;
       }
 
+      // append the new content to the current message and update the UI
       const curDelta = chunk.choices[0].delta.content;
       if (curDelta) {
         curMessage += curDelta;

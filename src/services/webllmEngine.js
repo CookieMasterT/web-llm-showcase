@@ -7,7 +7,8 @@ export const availableModels = webllm.prebuiltAppConfig.model_list.map(
 
 // Callback function for initializing progress
 export function updateEngineInitProgressCallback(report) {
-  console.log("initialize", report.progress);
+  // todo: convert this to a progress bar
+  // console.log("initialize", report.progress);
   document.getElementById("download-status").textContent = report.text;
 }
 
