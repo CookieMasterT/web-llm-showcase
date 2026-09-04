@@ -1,11 +1,13 @@
 import { state, messages } from "../state/appState.js";
 import { DEFAULT_SYSTEM_PROMPT } from "../config/constants.js";
+import { logger } from "../utils/logger.js";
 
 export function initControls() {
   // Bind Pause control
   document.getElementById("pause-btn").addEventListener("click", function () {
     state.isPaused = !state.isPaused;
     this.textContent = state.isPaused ? "RESUME" : "PAUSE";
+    logger.debug("Pause toggled. isPaused:", state.isPaused);
     if (state.isPaused) {
       this.classList.add("paused");
     } else {
@@ -16,6 +18,7 @@ export function initControls() {
   // Bind Stop control
   document.getElementById("stop-btn").addEventListener("click", function () {
     // This is nonsense, see issues #7 and #8
+    logger.debug("Stop requested. Setting isStopped = true.");
     state.isStopped = true;
     state.isPaused = false;
     this.textContent = "STOPPING...";
@@ -28,6 +31,7 @@ export function initControls() {
 
   // Bind Reset control
   document.getElementById("reset-btn").addEventListener("click", function () {
+    logger.debug("Reset triggered. Clearing messages and UI.");
     state.isStopped = true;
     state.isPaused = false;
 

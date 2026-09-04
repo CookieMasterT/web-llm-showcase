@@ -35,8 +35,20 @@
 - `src/ui/navigation.js`: Handles the navigation bar (on the left), and whether or not you are allowed to switch to a certain view. doesn't display anything or handle view changes itself.
 - `src/ui/tokenDiagnosticsView.js`: Contains the token diagnostics view, it is split into 2 columns, the left column contains the chosen tokens and special tokens, and the right column contains the current tokens probabilities over all tokens.
 - `src/utils/probabilityMath.js`: Contains the probability math, which is used to convert the token odds given by the backend into real probabilities (accounting for temperature, and accounting for top-p to show the real probabilities of the tokens).
+- `src/utils/logger.js`: Contains the logic for checking whether debug is enabled and passing logged information to the console.
 
 ## Agent Guidelines & Conventions
 - This project uses Vanilla JS, so no React, or other frontend frameworks. All UI components are built using Vanilla JS and HTML.
 - Don't use TailwindCSS, you can use the existing CSS, but don't add new Tailwind classes.
 - This project does not contain chat history, please do not hallucinate it containing chat history.
+- When adding new files, be sure to document what they do and what they are for in this file `AGENTS.md`, try to keep the style similair to the rest of this file.
+
+### Logging
+- The project supports logging functionality, you can enable it by running `setDebug(true)` in the console, and disable it by running `setDebug(false)`. You can also just (temporarily) edit `src/config/constants.js` to change the default debug mode.
+- In order to add logging to any file you need to import the logger from `src/utils/logger.js` usually via `import { logger } from "../utils/logger.js";`.
+- Don't add logging to files that are not relevant to the feature you are working on. Use:
+  - `logger.debug` for debugging information, such as backend calls and how the app reacts to events.
+  - `logger.info` for informational messages, such as application flow.
+  - `logger.warn` for warnings, things that might cause issues in the future, or you aren't sure about.
+  - `logger.error` for errors, things that are clearly wrong or break the application.
+- Very important: logs are never saved to a file, since this is a static site.

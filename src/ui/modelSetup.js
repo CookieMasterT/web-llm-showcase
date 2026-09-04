@@ -3,6 +3,7 @@ import {
   availableModels,
   initializeWebLLMEngine,
 } from "../services/webllmEngine.js";
+import { logger } from "../utils/logger.js";
 
 export function populateModels(filterQuery = "") {
   const select = document.getElementById("model-selection");
@@ -21,6 +22,10 @@ export function populateModels(filterQuery = "") {
     } else {
       select.selectedIndex = 0;
       state.selectedModel = select.value;
+      logger.debug(
+        "Selected model not in filtered list, defaulting to:",
+        state.selectedModel,
+      );
     }
   }
 }
@@ -30,8 +35,13 @@ export function initModelSetup() {
 
   // Initial populate, using the search query when it is not empty.
   populateModels(modelSearch.value);
+  logger.debug(
+    "Model setup initialized. Available models:",
+    availableModels.length,
+  );
 
   modelSearch.addEventListener("input", (e) => {
+    logger.debug("Model search filter changed:", e.target.value);
     populateModels(e.target.value);
   });
 
@@ -39,9 +49,11 @@ export function initModelSetup() {
     const downloadBtn = this;
     downloadBtn.disabled = true;
     downloadBtn.textContent = "Downloading...";
+    logger.info("Download initiated for model:", state.selectedModel);
 
     initializeWebLLMEngine()
       .then(() => {
+        logger.info("Model download complete. Switching to chat view.");
         downloadBtn.textContent = "Downloaded";
         document.getElementById("send").disabled = false;
 
@@ -55,9 +67,9 @@ export function initModelSetup() {
         chatNav.click();
       })
       .catch((err) => {
+        logger.error("Model download failed:", err);
         downloadBtn.disabled = false;
         downloadBtn.textContent = "Download";
-        console.error(err);
       });
   });
 }

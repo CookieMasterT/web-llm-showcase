@@ -1,5 +1,6 @@
 import { messages } from "../state/appState.js";
 import { streamingGenerating } from "../services/chatService.js";
+import { logger } from "../utils/logger.js";
 
 export function appendMessage(message) {
   const chatBox = document.getElementById("chat-box");
@@ -39,6 +40,10 @@ export function onMessageSend() {
   if (input.length === 0) {
     return;
   }
+  logger.debug(
+    "User message sent:",
+    input.substring(0, 80) + (input.length > 80 ? "..." : ""),
+  );
   document.getElementById("send").disabled = true;
 
   messages.push(message);
@@ -59,15 +64,13 @@ export function onMessageSend() {
   document.getElementById("chosen-tokens-display").innerHTML = "";
 
   const onFinishGenerating = (finalMessage) => {
+    logger.debug("AI response finished. Message length:", finalMessage.length);
     updateLastMessage(finalMessage);
     document.getElementById("send").disabled = false;
   };
 
-  streamingGenerating(
-    messages,
-    updateLastMessage,
-    onFinishGenerating,
-    console.error,
+  streamingGenerating(messages, updateLastMessage, onFinishGenerating, (err) =>
+    logger.error("Chat generation error:", err),
   );
 }
 

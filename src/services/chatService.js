@@ -4,6 +4,7 @@ import {
   appendChosenTokenVisual,
   updateProbabilitiesChart,
 } from "../ui/tokenDiagnosticsView.js";
+import { logger } from "../utils/logger.js";
 
 export async function streamingGenerating(
   messages,
@@ -16,6 +17,15 @@ export async function streamingGenerating(
     let curMessage = "";
     const temperature = parseFloat(document.getElementById("temp-input").value);
     const top_p = parseFloat(document.getElementById("topp-input").value);
+
+    logger.debug(
+      "Starting generation — messages:",
+      messages.length,
+      "| temperature:",
+      isNaN(temperature) ? 1.0 : temperature,
+      "| top_p:",
+      isNaN(top_p) ? 1.0 : top_p,
+    );
 
     const completion = await engine.chat.completions.create({
       stream: true,
@@ -30,6 +40,7 @@ export async function streamingGenerating(
 
     for await (const chunk of completion) {
       if (state.isStopped) {
+        logger.debug("Generation stopped by user (pre-pause check).");
         break;
       }
 
@@ -39,6 +50,7 @@ export async function streamingGenerating(
       }
 
       if (state.isStopped) {
+        logger.debug("Generation stopped by user (post-pause check).");
         break;
       }
 
@@ -56,6 +68,7 @@ export async function streamingGenerating(
       }
 
       if (state.isStopped) {
+        logger.debug("Generation stopped by user (post-speed-delay check).");
         break;
       }
 
@@ -88,6 +101,7 @@ export async function streamingGenerating(
     const finalMessage = await engine.getMessage();
     onFinish(finalMessage);
   } catch (err) {
+    logger.error("Generation error:", err);
     onError(err);
   } finally {
     // Reset stop button state when finished/stopped/errored

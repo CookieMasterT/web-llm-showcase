@@ -1,4 +1,5 @@
 import { calculateProbabilities } from "../utils/probabilityMath.js";
+import { logger } from "../utils/logger.js";
 
 // Update probabilities chart UI
 export function updateProbabilitiesChart(topLogprobs, chosenTokenText) {
@@ -9,6 +10,15 @@ export function updateProbabilitiesChart(topLogprobs, chosenTokenText) {
   const top_p = parseFloat(document.getElementById("topp-input").value);
   const finalTemp = isNaN(temp) ? 1.0 : temp;
   const finalTopP = isNaN(top_p) ? 1.0 : top_p;
+
+  logger.debug(
+    "Updating probabilities chart — temperature:",
+    finalTemp,
+    "| top_p:",
+    finalTopP,
+    "| candidates:",
+    topLogprobs.length,
+  );
 
   const { withRawChance, pickChances } = calculateProbabilities(
     topLogprobs,
