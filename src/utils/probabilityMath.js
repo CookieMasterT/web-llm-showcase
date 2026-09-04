@@ -4,7 +4,7 @@ export function calculateProbabilities(topLogprobs, finalTemp, finalTopP) {
 
   // 2. Compute Unnormalized Chance percentages (reconstructed for default temperature T = 1.0)
   // Backend logprobs already have finalTemp applied. To recover default temperature logits,
-  // we multiply logprob by finalTemp. When finalTemp <= 0.05, sampling was greedy.
+  // we multiply logprob by finalTemp. When finalTemp == 0, sampling is greedy.
   const rawWeights = sorted.map((item, idx) => {
     if (finalTemp == 0) {
       return idx === 0 ? 1.0 : 0.0;
