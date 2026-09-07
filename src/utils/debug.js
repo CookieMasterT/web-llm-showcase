@@ -14,7 +14,6 @@ const QUERIES = {
       console.log("isPaused      :", state.isPaused);
       console.log("isStopped     :", state.isStopped);
       console.groupEnd();
-      return { ...state };
     },
   },
 
@@ -26,23 +25,17 @@ const QUERIES = {
         "%c[query.completionStatus]",
         "color: #a78bfa; font-weight: bold;",
       );
-      const c = state;
-      if (c === null) {
+      if (state === null) {
         console.log("completion: null (no active generation)");
         console.groupEnd();
         return null;
       }
-      console.log("completion object :", c);
       console.log(
-        "model             :",
-        c.selectedModel ?? "(not yet available)",
+        "selectedModel     :",
+        state.selectedModel ?? "(not yet available)",
       );
-      console.log("isPaused          :", c.isPaused ?? "(not yet available)");
-      console.log("isStopped         :", c.isStopped ?? "(not yet available)");
       console.log("current message   :", await engine.getMessage());
-
       console.groupEnd();
-      return c;
     },
   },
 

@@ -1,6 +1,7 @@
 import { state, messages } from "../state/appState.js";
 import { DEFAULT_SYSTEM_PROMPT } from "../config/constants.js";
 import { logger } from "../utils/logger.js";
+import { engine } from "../services/webllmEngine.js";
 
 export function initControls() {
   // Bind Pause control
@@ -17,10 +18,12 @@ export function initControls() {
 
   // Bind Stop control
   document.getElementById("stop-btn").addEventListener("click", function () {
-    // This is nonsense, see issues #7 and #8
-    logger.debug("Stop requested. Setting isStopped = true.");
+    logger.debug(
+      "Stop requested. Setting isStopped = true and signaling engine interruption.",
+    );
     state.isStopped = true;
     state.isPaused = false;
+    engine.interruptGenerate();
     this.textContent = "STOPPING...";
     this.disabled = true;
 
@@ -34,6 +37,7 @@ export function initControls() {
     logger.debug("Reset triggered. Clearing messages and UI.");
     state.isStopped = true;
     state.isPaused = false;
+    engine.interruptGenerate();
 
     const pauseBtn = document.getElementById("pause-btn");
     pauseBtn.textContent = "PAUSE";

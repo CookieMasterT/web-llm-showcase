@@ -38,12 +38,11 @@ export async function streamingGenerating(
 
     state.isStopped = false;
 
-    let interrupted = false;
     for await (const chunk of state.completion) {
       if (state.isStopped) {
-        logger.debug("Generation stopped by user (pre-pause check).");
-        interrupted = true;
-        break;
+        // Generation stopped: drain remaining chunk(s) without UI rendering
+        // so WebLLM's generator can cleanly reach its lock release.
+        continue;
       }
 
       // Check if paused, then wait until unpaused or stopped.
@@ -52,28 +51,19 @@ export async function streamingGenerating(
       }
 
       if (state.isStopped) {
-        logger.debug("Generation stopped by user (post-pause check).");
-        interrupted = true;
-        break;
+        continue;
       }
 
       // Apply speed delay (slider value represents delay in ms)
       const speedDelay = parseInt(
         document.getElementById("speed-slider").value,
       );
-      if (speedDelay > 0) {
+      if (speedDelay > 0 && !state.isStopped) {
         await new Promise((resolve) => setTimeout(resolve, speedDelay));
       }
 
-      // Check again, incase the user paused during the speed delay
-      while (state.isPaused && !state.isStopped) {
-        await new Promise((resolve) => setTimeout(resolve, 50));
-      }
-
       if (state.isStopped) {
-        logger.debug("Generation stopped by user (post-speed-delay check).");
-        interrupted = true;
-        break;
+        continue;
       }
 
       // append the new content to the current message and update the UI
@@ -103,9 +93,8 @@ export async function streamingGenerating(
       }
     }
 
-    if (interrupted) {
-      // Properly cancel the WebLLM backend so it stops generating.
-      logger.debug("Interrupting WebLLM engine backend.");
+    if (state.isStopped) {
+      logger.debug("Generation finished after stop interruption.");
     }
 
     const finalMessage = await engine.getMessage();
