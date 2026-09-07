@@ -27,7 +27,7 @@ export async function streamingGenerating(
       isNaN(top_p) ? 1.0 : top_p,
     );
 
-    const completion = await engine.chat.completions.create({
+    state.completion = await engine.chat.completions.create({
       stream: true,
       messages,
       logprobs: true,
@@ -38,9 +38,11 @@ export async function streamingGenerating(
 
     state.isStopped = false;
 
-    for await (const chunk of completion) {
+    let interrupted = false;
+    for await (const chunk of state.completion) {
       if (state.isStopped) {
         logger.debug("Generation stopped by user (pre-pause check).");
+        interrupted = true;
         break;
       }
 
@@ -51,6 +53,7 @@ export async function streamingGenerating(
 
       if (state.isStopped) {
         logger.debug("Generation stopped by user (post-pause check).");
+        interrupted = true;
         break;
       }
 
@@ -69,6 +72,7 @@ export async function streamingGenerating(
 
       if (state.isStopped) {
         logger.debug("Generation stopped by user (post-speed-delay check).");
+        interrupted = true;
         break;
       }
 
@@ -98,6 +102,12 @@ export async function streamingGenerating(
         appendChosenTokenVisual("<|im_end|>");
       }
     }
+
+    if (interrupted) {
+      // Properly cancel the WebLLM backend so it stops generating.
+      logger.debug("Interrupting WebLLM engine backend.");
+    }
+
     const finalMessage = await engine.getMessage();
     onFinish(finalMessage);
   } catch (err) {
@@ -108,5 +118,6 @@ export async function streamingGenerating(
     stopBtn.textContent = "STOP";
     stopBtn.disabled = false;
     document.getElementById("send").disabled = false;
+    state.completion = null;
   }
 }

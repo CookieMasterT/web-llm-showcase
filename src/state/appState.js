@@ -11,4 +11,5 @@ export const state = {
   selectedModel: DEFAULT_MODEL,
   isPaused: false,
   isStopped: false,
+  completion: null,
 };

@@ -28,7 +28,7 @@
 - `src/config/constants.js`: Application constants and default configuration values, contains the default model, system prompt and available navigation ids.
 - `src/services/chatService.js`: A service for chatView.js, handles the async loop for streaming tokens from the model.
 - `src/services/webllmEngine.js`: A service for modelSetup.js and chatService.js, handles initalizing the Webllm backend, responsible for listing available models, does NOT download or run models. 
-- `src/state/appState.js`: Contains the application state, contains the current messages, the currently selected model, and whether the inference is stopped or paused.
+- `src/state/appState.js`: Contains the application state, contains the current messages, the currently selected model, whether the inference is stopped or paused, and the active `completion` iterator (null when idle).
 - `src/ui/chatView.js`: Contains a set of functions used to show the chat inside the ui.
 - `src/ui/controls.js`: Binds the 3 inference control buttons: stop, pause and reset, does NOT control the slider, or the message input box.
 - `src/ui/modelSetup.js`: Controls the model setup panel, handles downloading models and enabling further progression.
@@ -36,6 +36,7 @@
 - `src/ui/tokenDiagnosticsView.js`: Contains the token diagnostics view, it is split into 2 columns, the left column contains the chosen tokens and special tokens, and the right column contains the current tokens probabilities over all tokens.
 - `src/utils/probabilityMath.js`: Contains the probability math, which is used to convert the token odds given by the backend into real probabilities (accounting for temperature, and accounting for top-p to show the real probabilities of the tokens).
 - `src/utils/logger.js`: Contains the logic for checking whether debug is enabled and passing logged information to the console.
+- `src/utils/debug.js`: Exposes a `window.query` namespace in the browser DevTools console for querying live application state. Add new queries to the `QUERIES` map inside this file. Current commands: `query.help()`, `query.appState()`, `query.completionStatus()`.
 
 ## Agent Guidelines & Conventions
 - This project uses Vanilla JS, so no React, or other frontend frameworks. All UI components are built using Vanilla JS and HTML.
