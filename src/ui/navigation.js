@@ -3,10 +3,15 @@ import { logger } from "../utils/logger.js";
 
 export function initNavigation() {
   VIEW_NAVS.forEach((view) => {
-    document.getElementById(`nav-${view}`).addEventListener("click", () => {
-      // Only allow switching to Chat/Insights if disabled attribute is not present
-      if (document.getElementById(`nav-${view}`).hasAttribute("disabled")) {
-        logger.debug(`Navigation to "${view}" blocked (tab is disabled).`);
+    const navElement = document.getElementById(`nav-${view}`);
+    // Disable navigation to Chat/Insights at startup
+    if (view !== "setup") {
+      navElement.setAttribute("disabled", "true");
+    }
+
+    // Only allow switching to Chat/Insights if disabled attribute is not present
+    navElement.addEventListener("click", () => {
+      if (navElement.hasAttribute("disabled")) {
         return;
       }
       logger.debug(`Navigating to view: "${view}".`);
