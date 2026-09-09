@@ -27,6 +27,13 @@ export async function streamingGenerating(
       isNaN(top_p) ? 1.0 : top_p,
     );
 
+    state.isStopped = false;
+    state.isInferring = true;
+    if (stopBtn) {
+      stopBtn.disabled = false;
+      stopBtn.textContent = "STOP";
+    }
+
     state.completion = await engine.chat.completions.create({
       stream: true,
       messages,
@@ -35,8 +42,6 @@ export async function streamingGenerating(
       temperature: isNaN(temperature) ? 1.0 : temperature,
       top_p: isNaN(top_p) ? 1.0 : top_p,
     });
-
-    state.isStopped = false;
 
     for await (const chunk of state.completion) {
       if (state.isStopped) {
@@ -113,9 +118,12 @@ export async function streamingGenerating(
     onError(err);
   } finally {
     // Reset stop button state when finished/stopped/errored
-    stopBtn.textContent = "STOP";
-    stopBtn.disabled = false;
-    document.getElementById("send").disabled = false;
     state.completion = null;
+    state.isInferring = false;
+    if (stopBtn) {
+      stopBtn.textContent = "STOP";
+      stopBtn.disabled = true;
+    }
+    document.getElementById("send").disabled = false;
   }
 }

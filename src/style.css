@@ -156,8 +156,15 @@ html {
     font-size: 0.9em;
 }
 
-.play-controls button:hover {
+.play-controls button:hover:not(:disabled) {
     background-color: #3a3a3a;
+}
+
+.play-controls button:disabled {
+    background-color: #1a1a1a;
+    color: #555;
+    border-color: #2c2c2c;
+    cursor: not-allowed;
 }
 
 #pause-btn.paused {

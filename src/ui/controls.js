@@ -18,6 +18,9 @@ export function initControls() {
 
   // Bind Stop control
   document.getElementById("stop-btn").addEventListener("click", function () {
+    if (!state.isInferring) {
+      return;
+    }
     logger.debug(
       "Stop requested. Setting isStopped = true and signaling engine interruption.",
     );
@@ -45,7 +48,7 @@ export function initControls() {
 
     const stopBtn = document.getElementById("stop-btn");
     stopBtn.textContent = "STOP";
-    stopBtn.disabled = false;
+    stopBtn.disabled = true;
 
     // Inject system prompt into chat box.
     const chatBox = document.getElementById("chat-box");

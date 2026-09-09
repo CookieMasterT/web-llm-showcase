@@ -13,6 +13,7 @@ const QUERIES = {
       console.log("selectedModel :", state.selectedModel);
       console.log("isPaused      :", state.isPaused);
       console.log("isStopped     :", state.isStopped);
+      console.log("isInferring   :", state.isInferring);
       console.groupEnd();
     },
   },

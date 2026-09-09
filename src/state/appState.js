@@ -9,7 +9,8 @@ export const messages = [
 
 export const state = {
   selectedModel: DEFAULT_MODEL,
-  isPaused: false,
-  isStopped: false,
-  completion: null,
+  isPaused: false, // if the model should pause due to the user hitting "PAUSE".
+  isStopped: false, // if the model is stopping due to the user hitting "STOP", notably reset before each query.
+  isInferring: false, // if the model is currently generating
+  completion: null, // the current completion object
 };
