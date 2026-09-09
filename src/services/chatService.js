@@ -54,14 +54,14 @@ export async function streamingGenerating(
         continue;
       }
 
-      // Check if model stopped naturally
-      const isStopped = chunk.choices[0].finish_reason === "stop";
+      // Check if model stopped naturally (the model finished, beacuse it chose <|im_end|>)
+      const isNaturallyStopped = chunk.choices[0].finish_reason === "stop";
 
       // Apply speed delay (slider value represents delay in ms)
       const speedDelay = parseInt(
         document.getElementById("speed-slider").value,
       );
-      if (speedDelay > 0 && !state.isStopped && !isStopped) {
+      if (speedDelay > 0 && !state.isStopped && !isNaturallyStopped) {
         await new Promise((resolve) => setTimeout(resolve, speedDelay));
       }
 
@@ -83,7 +83,7 @@ export async function streamingGenerating(
       onUpdate(curMessage);
 
       // If model stops naturally, append the special stop token to chosen tokens visualization
-      if (isStopped) {
+      if (isNaturallyStopped) {
         curDelta = "<|im_end|>";
         appendChosenTokenVisual(curDelta);
       }
