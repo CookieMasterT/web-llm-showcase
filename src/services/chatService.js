@@ -54,11 +54,14 @@ export async function streamingGenerating(
         continue;
       }
 
+      // Check if model stopped naturally
+      const isStopped = chunk.choices[0].finish_reason === "stop";
+
       // Apply speed delay (slider value represents delay in ms)
       const speedDelay = parseInt(
         document.getElementById("speed-slider").value,
       );
-      if (speedDelay > 0 && !state.isStopped) {
+      if (speedDelay > 0 && !state.isStopped && !isStopped) {
         await new Promise((resolve) => setTimeout(resolve, speedDelay));
       }
 
@@ -67,12 +70,18 @@ export async function streamingGenerating(
       }
 
       // append the new content to the current message and update the UI
-      const curDelta = chunk.choices[0].delta.content;
+      let curDelta = chunk.choices[0].delta.content;
       if (curDelta) {
         curMessage += curDelta;
         appendChosenTokenVisual(curDelta);
       }
       onUpdate(curMessage);
+
+      // If model stops naturally, append the special stop token to chosen tokens visualization
+      if (isStopped) {
+        curDelta = "<|im_end|>";
+        appendChosenTokenVisual(curDelta);
+      }
 
       // Display probabilities
       const logprobsObj = chunk.choices[0].logprobs;
@@ -85,11 +94,6 @@ export async function streamingGenerating(
         if (topLogprobs) {
           updateProbabilitiesChart(topLogprobs, curDelta);
         }
-      }
-
-      // If finish reason is stop, append the special stop token to chosen tokens visualization
-      if (chunk.choices[0].finish_reason === "stop") {
-        appendChosenTokenVisual("<|im_end|>");
       }
     }
 

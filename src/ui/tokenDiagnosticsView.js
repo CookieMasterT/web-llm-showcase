@@ -16,8 +16,10 @@ export function updateProbabilitiesChart(topLogprobs, chosenTokenText) {
     finalTemp,
     "| top_p:",
     finalTopP,
+    "| chosen Token:",
+    chosenTokenText,
     "| candidates:",
-    topLogprobs.length,
+    topLogprobs,
   );
 
   const { withRawChance, pickChances } = calculateProbabilities(
@@ -36,12 +38,10 @@ export function updateProbabilitiesChart(topLogprobs, chosenTokenText) {
     const row = document.createElement("div");
     row.classList.add("prob-row");
 
-    const isChosen =
-      chosenTokenText &&
-      (item.token === chosenTokenText ||
-        item.token.replace(/[^a-zA-Z0-9]/g, "") ===
-          chosenTokenText.replace(/[^a-zA-Z0-9]/g, ""));
-    if (isChosen) {
+    if (
+      (chosenTokenText && item.token === chosenTokenText) ||
+      (!chosenTokenText && item.token === "<|im_end|>")
+    ) {
       row.classList.add("chosen-highlight");
     }
 
