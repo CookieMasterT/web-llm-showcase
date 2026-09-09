@@ -65,6 +65,11 @@ export async function streamingGenerating(
         await new Promise((resolve) => setTimeout(resolve, speedDelay));
       }
 
+      // Check if paused, this time after the speed delay, as to not let a token slip.
+      while (state.isPaused && !state.isStopped) {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+
       if (state.isStopped) {
         continue;
       }
