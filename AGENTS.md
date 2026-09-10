@@ -28,7 +28,7 @@
 - `src/config/constants.js`: Application constants and default configuration values, contains the default model, system prompt and available navigation ids.
 - `src/services/chatService.js`: A service for chatView.js, handles the async loop for streaming tokens from the model.
 - `src/services/webllmEngine.js`: A service for modelSetup.js and chatService.js, handles initalizing the Webllm backend, responsible for listing available models, does NOT download or run models. 
-- `src/state/appState.js`: Contains the application state, contains the current messages, the currently selected model, whether the inference is stopped or paused, and the active `completion` iterator (null when idle).
+- `src/state/appState.js`: Contains the application state, contains the current messages, the currently selected model, whether the inference is stopped, paused, generating (inference), and the active `completion` iterator (null when idle).
 - `src/ui/chatView.js`: Contains a set of functions used to show the chat inside the ui.
 - `src/ui/controls.js`: Binds the 3 inference control buttons: stop, pause and reset, does NOT control the slider, or the message input box.
 - `src/ui/modelSetup.js`: Controls the model setup panel, handles downloading models and enabling further progression.
