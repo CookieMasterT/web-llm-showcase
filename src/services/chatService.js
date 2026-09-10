@@ -16,6 +16,10 @@ export async function streamingGenerating(
   try {
     let curMessage = "";
 
+    const tempInput = document.getElementById("temp-input");
+    const toppInput = document.getElementById("topp-input");
+    const temperature = parseFloat(tempInput.value);
+    const top_p = parseFloat(toppInput.value);
     logger.debug(
       "Starting generation — messages:",
       messages.length,
@@ -29,10 +33,6 @@ export async function streamingGenerating(
     state.isInferring = true;
 
     // Disable inference controls and reenable stop button.
-    const temperature = parseFloat(document.getElementById("temp-input").value);
-    const top_p = parseFloat(document.getElementById("topp-input").value);
-    const tempInput = document.getElementById("temp-input");
-    const toppInput = document.getElementById("topp-input");
     if (tempInput) {
       tempInput.disabled = true;
     }
@@ -73,9 +73,8 @@ export async function streamingGenerating(
       const isNaturallyStopped = chunk.choices[0].finish_reason === "stop";
 
       // Apply speed delay (slider value represents delay in ms)
-      const speedDelay = parseInt(
-        document.getElementById("speed-slider").value,
-      );
+      const speedDelay =
+        1000 - parseInt(document.getElementById("speed-slider").value);
       if (speedDelay > 0 && !state.isStopped && !isNaturallyStopped) {
         await new Promise((resolve) => setTimeout(resolve, speedDelay));
       }
@@ -117,11 +116,17 @@ export async function streamingGenerating(
       }
     }
 
+    let finalMessage = "";
     if (state.isStopped) {
       logger.debug("Generation finished after stop interruption.");
+      if (curMessage.length === 0) {
+        finalMessage =
+          "[Generation was stopped, before the model produced a response]";
+      }
+    } else {
+      finalMessage = await engine.getMessage();
     }
 
-    const finalMessage = await engine.getMessage();
     onFinish(finalMessage);
   } catch (err) {
     logger.error("Generation error:", err);

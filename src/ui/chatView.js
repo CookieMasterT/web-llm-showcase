@@ -49,13 +49,12 @@ export function onMessageSend() {
   messages.push(message);
   appendMessage(message);
 
-  document.getElementById("user-input").value = "";
-  document
-    .getElementById("user-input")
-    .setAttribute("placeholder", "Generating...");
+  const userInput = document.getElementById("user-input");
+  userInput.value = "";
+  userInput.setAttribute("placeholder", "Generating...");
 
   const aiMessage = {
-    content: "typing...",
+    content: "Generating...",
     role: "assistant",
   };
   appendMessage(aiMessage);
@@ -67,6 +66,7 @@ export function onMessageSend() {
     logger.debug("AI response finished. Message length:", finalMessage.length);
     updateLastMessage(finalMessage);
     document.getElementById("send").disabled = false;
+    userInput.setAttribute("placeholder", "Type a message...");
   };
 
   streamingGenerating(messages, updateLastMessage, onFinishGenerating, (err) =>
