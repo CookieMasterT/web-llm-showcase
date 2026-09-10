@@ -70,5 +70,13 @@ export function initControls() {
       .getElementById("user-input")
       .setAttribute("placeholder", "Send a message...");
     document.getElementById("send").disabled = false;
+    const tempInput = document.getElementById("temp-input");
+    const toppInput = document.getElementById("topp-input");
+    if (tempInput) {
+      tempInput.disabled = false;
+    }
+    if (toppInput) {
+      toppInput.disabled = false;
+    }
   });
 }

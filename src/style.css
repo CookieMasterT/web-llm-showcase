@@ -343,6 +343,7 @@ html {
     font-size: 0.75em;
     color: #888;
     margin-bottom: 2px;
+    transition: color 0.2s ease;
 }
 
 .input-item input {
@@ -352,6 +353,20 @@ html {
     border-radius: 4px;
     padding: 6px;
     font-size: 0.85em;
+    transition: all 0.2s ease;
+}
+
+.input-item input:disabled {
+    background-color: #161616;
+    color: #555;
+    border-color: #2c2c2c;
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.input-item:has(input:disabled) label {
+    color: #555;
+    cursor: not-allowed;
 }
 
 .chosen-tokens-box {

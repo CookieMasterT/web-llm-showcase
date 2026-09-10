@@ -15,8 +15,6 @@ export async function streamingGenerating(
   const stopBtn = document.getElementById("stop-btn");
   try {
     let curMessage = "";
-    const temperature = parseFloat(document.getElementById("temp-input").value);
-    const top_p = parseFloat(document.getElementById("topp-input").value);
 
     logger.debug(
       "Starting generation — messages:",
@@ -29,6 +27,18 @@ export async function streamingGenerating(
 
     state.isStopped = false;
     state.isInferring = true;
+
+    // Disable inference controls and reenable stop button.
+    const temperature = parseFloat(document.getElementById("temp-input").value);
+    const top_p = parseFloat(document.getElementById("topp-input").value);
+    const tempInput = document.getElementById("temp-input");
+    const toppInput = document.getElementById("topp-input");
+    if (tempInput) {
+      tempInput.disabled = true;
+    }
+    if (toppInput) {
+      toppInput.disabled = true;
+    }
     if (stopBtn) {
       stopBtn.disabled = false;
       stopBtn.textContent = "STOP";
@@ -117,9 +127,17 @@ export async function streamingGenerating(
     logger.error("Generation error:", err);
     onError(err);
   } finally {
-    // Reset stop button state when finished/stopped/errored
+    // Reset UI states when finished/stopped/errored
     state.completion = null;
     state.isInferring = false;
+    const tempInput = document.getElementById("temp-input");
+    const toppInput = document.getElementById("topp-input");
+    if (tempInput) {
+      tempInput.disabled = false;
+    }
+    if (toppInput) {
+      toppInput.disabled = false;
+    }
     if (stopBtn) {
       stopBtn.textContent = "STOP";
       stopBtn.disabled = true;
