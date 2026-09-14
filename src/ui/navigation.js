@@ -4,14 +4,11 @@ import { logger } from "../utils/logger.js";
 export function initNavigation() {
   VIEW_NAVS.forEach((view) => {
     const navElement = document.getElementById(`nav-${view}`);
-    // Disable navigation to Chat/Insights at startup
-    if (view !== "setup") {
-      navElement.setAttribute("disabled", "true");
-    }
+    allowNavigation(false);
 
     // Only allow switching to Chat/Insights if disabled attribute is not present
     navElement.addEventListener("click", () => {
-      if (navElement.hasAttribute("disabled")) {
+      if (navElement.disabled) {
         return;
       }
       logger.debug(`Navigating to view: "${view}".`);
@@ -22,5 +19,21 @@ export function initNavigation() {
       document.getElementById(`${view}-view`).classList.remove("hidden");
       document.getElementById(`nav-${view}`).classList.add("active");
     });
+  });
+}
+
+export function allowNavigation(allow) {
+  const blockedViews = ["chat", "insights"];
+  blockedViews.forEach((view) => {
+    const navElement = document.getElementById(`nav-${view}`);
+    if (!navElement) return;
+
+    if (allow) {
+      navElement.disabled = false;
+      navElement.title = "";
+    } else {
+      navElement.disabled = true;
+      navElement.title = "Please download a model first";
+    }
   });
 }

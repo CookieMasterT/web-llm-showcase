@@ -27,12 +27,12 @@
 - `src/style.css`: Global styles and CSS rules, not relevant for code changes since it's not a UI component.
 - `src/config/constants.js`: Application constants and default configuration values, contains the default model, system prompt and available navigation ids.
 - `src/services/chatService.js`: A service for chatView.js, handles the async loop for streaming tokens from the model.
-- `src/services/webllmEngine.js`: A service for modelSetup.js and chatService.js, handles initalizing the Webllm backend, responsible for listing available models, does NOT download or run models. 
-- `src/state/appState.js`: Contains the application state, contains the current messages, the currently selected model, whether the inference is stopped, paused, generating (inference), and the active `completion` iterator (null when idle).
+- `src/services/webllmEngine.js`: A service for modelSetup.js and chatService.js, handles initializing and reloading the WebLLM backend, unloading models, and listing available models.
+- `src/state/appState.js`: Contains the application state, including the current messages, the currently selected model, the currently loaded model, downloading state, whether inference is stopped, paused, generating (inference), and the active `completion` iterator (null when idle).
 - `src/ui/chatView.js`: Contains a set of functions used to show the chat inside the ui.
 - `src/ui/controls.js`: Binds the 3 inference control buttons: stop, pause and reset, does NOT control the slider, or the message input box.
 - `src/ui/modelSetup.js`: Controls the model setup panel, handles downloading models and enabling further progression.
-- `src/ui/navigation.js`: Handles the navigation bar (on the left), and whether or not you are allowed to switch to a certain view. doesn't display anything or handle view changes itself.
+- `src/ui/navigation.js`: Handles the navigation bar (on the left), and whether or not you are allowed to switch to a certain view. doesn't display anything or handle view changes itself. Exposes a function for blocking / allowing navigation from chat / insights, navigating to chat while a model does not exist shouldn't be allowed as usage will always fail and confuse the user.
 - `src/ui/tokenDiagnosticsView.js`: Contains the token diagnostics view, it is split into 2 columns, the left column contains the chosen tokens and special tokens, and the right column contains the current tokens probabilities over all tokens.
 - `src/utils/probabilityMath.js`: Contains the probability math, which is used to convert the token odds given by the backend into real probabilities (accounting for temperature, and accounting for top-p to show the real probabilities of the tokens).
 - `src/utils/logger.js`: Contains the logic for checking whether debug is enabled and passing logged information to the console.

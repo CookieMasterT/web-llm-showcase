@@ -11,6 +11,8 @@ const QUERIES = {
     fn() {
       console.group("%c[query.appState]", "color: #a78bfa; font-weight: bold;");
       console.log("selectedModel :", state.selectedModel);
+      console.log("loadedModel   :", state.loadedModel);
+      console.log("isDownloading :", state.isDownloading);
       console.log("isPaused      :", state.isPaused);
       console.log("isStopped     :", state.isStopped);
       console.log("isInferring   :", state.isInferring);
