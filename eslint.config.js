@@ -25,6 +25,7 @@ export default defineConfig([
     extends: ["js/recommended", prettierConfig],
     languageOptions: { globals: globals.browser },
     rules: {
+      "linebreak-style": ["error", "windows"],
       "prettier/prettier": [
         "error",
         {
