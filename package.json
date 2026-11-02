@@ -7,10 +7,12 @@
     "start": "vite",
     "dev": "vite",
     "debug": "vite --mode debug",
+    "prebuild": "npm --prefix web-llm-unlocked run build",
     "build": "vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
+    "postinstall": "npm --prefix web-llm-unlocked install && npm --prefix web-llm-unlocked run build",
     "prepare": "husky"
   },
   "lint-staged": {
