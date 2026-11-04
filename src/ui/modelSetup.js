@@ -6,6 +6,7 @@ import {
 } from "../services/webllmEngine.js";
 import { allowNavigation } from "./navigation.js";
 import { logger } from "../utils/logger.js";
+import { reportError } from "../utils/errorHandler.js";
 
 export function updateDownloadButtonState() {
   const downloadBtn = document.getElementById("download");
@@ -132,12 +133,16 @@ export function initModelSetup() {
       })
       .catch((err) => {
         logger.error("Model download failed:", err);
+        reportError(err, "Model download failed");
         state.isDownloading = false;
         modelSelect.disabled = false;
         modelSearch.disabled = false;
         // Navigation remains blocked if no model is loaded
         allowNavigation(state.loadedModel !== null);
         updateDownloadButtonState();
+        if (sendBtn) {
+          sendBtn.disabled = state.loadedModel === null;
+        }
       });
   });
 }

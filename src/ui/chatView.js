@@ -1,6 +1,7 @@
 import { messages } from "../state/appState.js";
 import { streamingGenerating } from "../services/chatService.js";
 import { logger } from "../utils/logger.js";
+import { reportError } from "../utils/errorHandler.js";
 
 export function appendMessage(message) {
   const chatBox = document.getElementById("chat-box");
@@ -69,8 +70,16 @@ export function onMessageSend() {
     userInput.setAttribute("placeholder", "Type a message...");
   };
 
-  streamingGenerating(messages, updateLastMessage, onFinishGenerating, (err) =>
-    logger.error("Chat generation error:", err),
+  streamingGenerating(
+    messages,
+    updateLastMessage,
+    onFinishGenerating,
+    (err) => {
+      logger.error("Chat generation error:", err);
+      updateLastMessage("Generation failed. See the error message above.");
+      reportError(err, "Chat generation failed");
+      userInput.setAttribute("placeholder", "Type a message...");
+    },
   );
 }
 
