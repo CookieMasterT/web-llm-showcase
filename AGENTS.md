@@ -44,6 +44,11 @@
 - This project does not contain chat history, please do not hallucinate it containing chat history.
 - When adding new files, be sure to document what they do and what they are for in this file `AGENTS.md`, try to keep the style similair to the rest of this file.
 
+### Token Diagnostics
+- Special tokens must be highlighted in green so they are visually distinct from ordinary tokens. In `src/style.css`, use the existing `.chosen-token-span.end-token` style for a special token in the chosen-token stream and `.special-tokens-list li.model-end-token` for its entry in the special-token list.
+- In `src/ui/tokenDiagnosticsView.js`, pass `true` as the second argument to `appendChosenTokenVisual(tokenText, true)` to apply the green chosen-token style. Use `highlightModelEndToken(tokenText)` to find or add the corresponding special-token list entry and apply its green highlight. Follow this pattern for other special tokens rather than introducing a different highlight color.
+The most notable special tokens are <|im_end|> and markdown ``` start and end.
+
 ### Logging
 - The project supports logging functionality, you can enable it by running `setDebug(true)` in the console, and disable it by running `setDebug(false)`. You can also just (temporarily) edit `src/config/constants.js` to change the default debug mode.
 - In order to add logging to any file you need to import the logger from `src/utils/logger.js` usually via `import { logger } from "../utils/logger.js";`.

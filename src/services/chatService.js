@@ -2,6 +2,8 @@ import { engine } from "./webllmEngine.js";
 import { state } from "../state/appState.js";
 import {
   appendChosenTokenVisual,
+  highlightModelEndToken,
+  resetModelEndTokenHighlight,
   updateProbabilitiesChart,
 } from "../ui/tokenDiagnosticsView.js";
 import { logger } from "../utils/logger.js";
@@ -15,6 +17,8 @@ export async function streamingGenerating(
   const stopBtn = document.getElementById("stop-btn");
   try {
     let curMessage = "";
+    let lastSampledToken;
+    resetModelEndTokenHighlight();
 
     const tempInput = document.getElementById("temp-input");
     const toppInput = document.getElementById("topp-input");
@@ -69,7 +73,7 @@ export async function streamingGenerating(
         continue;
       }
 
-      // Check if model stopped naturally (the model finished, beacuse it chose <|im_end|>)
+      // Check if the model stopped using its configured stop condition.
       const isNaturallyStopped = chunk.choices[0].finish_reason === "stop";
 
       // Apply speed delay (slider value represents delay in ms)
@@ -90,20 +94,32 @@ export async function streamingGenerating(
 
       // append the new content to the current message and update the UI
       let curDelta = chunk.choices[0].delta.content;
+      const logprobsObj = chunk.choices[0].logprobs;
+      const selectedTokenLogprob = logprobsObj?.content?.[0];
+      if (selectedTokenLogprob) {
+        lastSampledToken = selectedTokenLogprob.token;
+      }
+
       if (curDelta) {
         curMessage += curDelta;
         appendChosenTokenVisual(curDelta);
       }
       onUpdate(curMessage);
 
-      // If model stops naturally, append the special stop token to chosen tokens visualization
+      // The final stop chunk does not include logprobs, so use the sampled token
+      // from the preceding generation chunk.
       if (isNaturallyStopped) {
-        curDelta = "<|im_end|>";
-        appendChosenTokenVisual(curDelta);
+        if (lastSampledToken) {
+          appendChosenTokenVisual(lastSampledToken, true);
+          highlightModelEndToken(lastSampledToken);
+        } else {
+          logger.warn(
+            "Generation stopped without a sampled token in logprobs.",
+          );
+        }
       }
 
       // Display probabilities
-      const logprobsObj = chunk.choices[0].logprobs;
       if (
         logprobsObj &&
         logprobsObj.content &&
@@ -111,7 +127,11 @@ export async function streamingGenerating(
       ) {
         const topLogprobs = logprobsObj.content[0].top_logprobs;
         if (topLogprobs) {
-          updateProbabilitiesChart(topLogprobs, curDelta);
+          updateProbabilitiesChart(
+            topLogprobs,
+            selectedTokenLogprob?.token || curDelta,
+            selectedTokenLogprob,
+          );
         }
       }
     }

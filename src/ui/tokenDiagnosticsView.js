@@ -2,7 +2,11 @@ import { calculateProbabilities } from "../utils/probabilityMath.js";
 import { logger } from "../utils/logger.js";
 
 // Update probabilities chart UI
-export function updateProbabilitiesChart(topLogprobs, chosenTokenText) {
+export function updateProbabilitiesChart(
+  topLogprobs,
+  chosenTokenText,
+  chosenTokenLogprob,
+) {
   const chart = document.getElementById("probabilities-chart");
   chart.innerHTML = "";
 
@@ -22,8 +26,16 @@ export function updateProbabilitiesChart(topLogprobs, chosenTokenText) {
     topLogprobs,
   );
 
+  const candidates = [...topLogprobs];
+  if (
+    chosenTokenLogprob &&
+    !candidates.some((item) => item.token === chosenTokenLogprob.token)
+  ) {
+    candidates.push(chosenTokenLogprob);
+  }
+
   const { withRawChance, pickChances } = calculateProbabilities(
-    topLogprobs,
+    candidates,
     finalTemp,
     finalTopP,
   );
@@ -38,10 +50,7 @@ export function updateProbabilitiesChart(topLogprobs, chosenTokenText) {
     const row = document.createElement("div");
     row.classList.add("prob-row");
 
-    if (
-      (chosenTokenText && item.token === chosenTokenText) ||
-      (!chosenTokenText && item.token === "<|im_end|>")
-    ) {
+    if (chosenTokenText && item.token === chosenTokenText) {
       row.classList.add("chosen-highlight");
     }
 
@@ -78,14 +87,57 @@ export function updateProbabilitiesChart(topLogprobs, chosenTokenText) {
   });
 }
 
-export function appendChosenTokenVisual(tokenText) {
+export function appendChosenTokenVisual(tokenText, isSpecialToken = false) {
   const display = document.getElementById("chosen-tokens-display");
   if (display.textContent.includes("As text is generated here")) {
     display.innerHTML = "";
   }
   const span = document.createElement("span");
   span.classList.add("chosen-token-span");
+  if (isSpecialToken) {
+    span.classList.add("end-token");
+  }
   span.textContent = tokenText;
   display.appendChild(span);
   display.scrollTop = display.scrollHeight;
+}
+
+export function resetModelEndTokenHighlight() {
+  const list = document.querySelector(".special-tokens-list");
+  list.querySelectorAll(".model-end-token").forEach((item) => {
+    item.classList.remove("model-end-token");
+  });
+  list.querySelectorAll("[data-dynamic-end-token]").forEach((item) => {
+    item.remove();
+  });
+}
+
+export function highlightModelEndToken(tokenText) {
+  if (!tokenText) {
+    return;
+  }
+
+  const list = document.querySelector(".special-tokens-list");
+  let item = Array.from(list.querySelectorAll(".tok-name"))
+    .find((token) => token.textContent === tokenText)
+    ?.closest("li");
+
+  if (!item) {
+    item = document.createElement("li");
+    item.dataset.dynamicEndToken = "true";
+
+    const tokenLabel = document.createElement("span");
+    tokenLabel.classList.add("tok-name");
+    tokenLabel.textContent = tokenText;
+
+    const infoIcon = document.createElement("span");
+    infoIcon.classList.add("info-icon");
+    infoIcon.title = "End token emitted by the current model.";
+    infoIcon.textContent = "ⓘ";
+
+    item.append(tokenLabel, infoIcon);
+    list.appendChild(item);
+  }
+
+  item.classList.add("model-end-token");
 }
