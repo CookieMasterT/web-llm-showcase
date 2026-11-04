@@ -19,22 +19,23 @@
 
 ### File Catalog
 - `vite.config.js`: Contains Vite configuration, entry points, CSS imports, and other build/serve settings.
-- `eslint.config.js`: ESLint configuration defining linting rules and target files.
+- `eslint.config.js`: ESLint configuration defining linting rules and target files; JavaScript files use LF line endings.
 - `package.json`: Contains project metadata, dependencies, and npm script commands.
 
-- `src/index.html`: The main HTML entry point for the application, only contains raw html, and import maps. When adding new features, you will likely need to modify this.
-- `src/index.js`: The primary JavaScript entry point, initializes the app and router, it simply initializes all other modules.
-- `src/style.css`: Global styles and CSS rules, not relevant for code changes since it's not a UI component.
+- `src/index.html`: The main HTML entry point for the application, contains raw HTML, import maps, and the shared user-facing error notification.
+- `src/index.js`: The primary JavaScript entry point; initializes application modules and global error handlers.
+- `src/style.css`: Global styles and CSS rules, including the shared error notification.
 - `src/config/constants.js`: Application constants and default configuration values, contains the default model, system prompt and available navigation ids.
 - `src/services/chatService.js`: A service for chatView.js, handles the async loop for streaming tokens from the model.
 - `src/services/webllmEngine.js`: A service for modelSetup.js and chatService.js, handles initializing and reloading the WebLLM backend, unloading models, and listing available models.
 - `src/state/appState.js`: Contains the application state, including the current messages, the currently selected model, the currently loaded model, downloading state, whether inference is stopped, paused, generating (inference), and the active `completion` iterator (null when idle).
-- `src/ui/chatView.js`: Contains a set of functions used to show the chat inside the ui.
+- `src/ui/chatView.js`: Contains functions used to show the chat UI and report inference errors to the user.
 - `src/ui/controls.js`: Binds the 3 inference control buttons: stop, pause and reset, does NOT control the slider, or the message input box.
-- `src/ui/modelSetup.js`: Controls the model setup panel, handles downloading models and enabling further progression.
+- `src/ui/modelSetup.js`: Controls the model setup panel, handles downloading models, reports setup errors, and enables further progression.
 - `src/ui/navigation.js`: Handles the navigation bar (on the left), and whether or not you are allowed to switch to a certain view. doesn't display anything or handle view changes itself. Exposes a function for blocking / allowing navigation from chat / insights, navigating to chat while a model does not exist shouldn't be allowed as usage will always fail and confuse the user.
 - `src/ui/tokenDiagnosticsView.js`: Contains the token diagnostics view, it is split into 2 columns, the left column contains the chosen tokens and special tokens, and the right column contains the current tokens probabilities over all tokens.
 - `src/utils/probabilityMath.js`: Contains the probability math, which is used to convert the token odds given by the backend into real probabilities (accounting for temperature, and accounting for top-p to show the real probabilities of the tokens).
+- `src/utils/errorHandler.js`: Captures uncaught browser errors and promise rejections, classifies known failures into user-facing guidance (including browser-specific site-data cleanup instructions for storage errors), and displays errors in the shared notification. Unknown errors are passed through as text when available.
 - `src/utils/logger.js`: Contains the logic for checking whether debug is enabled and passing logged information to the console.
 - `src/utils/debug.js`: Exposes a `window.query` namespace in the browser DevTools console for querying live application state. Add new queries to the `QUERIES` map inside this file. Current commands: `query.help()`, `query.appState()`, `query.completionStatus()`.
 
