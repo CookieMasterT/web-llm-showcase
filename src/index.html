@@ -29,13 +29,93 @@
         
         <!-- SETUP VIEW -->
         <section id="setup-view" class="view-panel">
-            <h2>Step 1: Initialize WebLLM and Download Model</h2>
-            <section class="download-container">
-                <input type="text" id="model-search" placeholder="Search model..." style="padding: 10px; background-color: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px;" />
-                <select id="model-selection"></select>
-                <button id="download">Download</button>
+            <header class="setup-heading">
+                <p class="setup-step-label">STEP 1 · MODEL SETUP</p>
+                <h2>Choose a model to run in your browser</h2>
+                <p>Parameters are the learned weights that shape a model. For the best experience in your browser, aim for a model with 8B parameters or fewer.</p>
+                <nav class="setup-progress" aria-label="Model setup progress">
+                    <ol>
+                        <li data-setup-step="1" aria-current="step"><span>1</span> Series</li>
+                        <li data-setup-step="2"><span>2</span> Model</li>
+                        <li data-setup-step="3"><span>3</span> Download</li>
+                    </ol>
+                </nav>
+                <p id="setup-stage-instruction" class="setup-stage-instruction">Choose a model family, or search for a model by name.</p>
+            </header>
+
+            <section id="setup-landing" class="setup-page">
+                <section class="setup-section">
+                    <div class="setup-section-heading">
+                        <div>
+                            <p class="setup-eyebrow">QUICK START</p>
+                            <h3>Recommended models</h3>
+                            <p>Good starting points for exploring local language models, from lightweight to more capable.</p>
+                        </div>
+                    </div>
+                    <div id="recommended-models" class="model-card-grid"></div>
+                </section>
+
+                <section id="personal-models-section" class="setup-section hidden">
+                    <div class="setup-section-heading">
+                        <div>
+                            <p class="setup-eyebrow">ON THIS DEVICE</p>
+                            <h3>Ready to use</h3>
+                            <p>Models you have recently used or already downloaded on this device.</p>
+                        </div>
+                    </div>
+                    <div id="personal-models" class="model-card-grid personal-model-grid"></div>
+                </section>
+
+                <section class="setup-section">
+                    <div class="setup-section-heading setup-browse-heading">
+                        <div>
+                            <p class="setup-eyebrow">EXPLORE</p>
+                            <h3>Choose a model family</h3>
+                            <p>Choose a series to compare models, or use Other for standalone and non-chat models.</p>
+                        </div>
+                        <label class="model-search-label" for="model-search">Search models
+                            <input type="search" id="model-search" placeholder="Search series, models, or creators" autocomplete="off" />
+                        </label>
+                    </div>
+                    <div id="model-series-list" class="series-card-grid"></div>
+                </section>
             </section>
-            <p id="download-status" class="hidden"></p>
+
+            <section id="series-models" class="setup-page hidden" aria-live="polite">
+                <button id="back-to-setup" class="setup-back-button" type="button">← All series</button>
+                <div id="series-detail-heading" class="series-detail-heading"></div>
+                <div id="series-model-list" class="model-card-grid"></div>
+            </section>
+
+            <section id="model-details" class="setup-page hidden" aria-live="polite">
+                <button id="back-to-models" class="setup-back-button" type="button">← Back</button>
+                <div id="model-detail-content"></div>
+                <div class="download-container">
+                    <div class="download-intro">
+                        <h3>Choose model format</h3>
+                        <dl class="format-explainer">
+                            <div>
+                                <dt>Weights (q4 or q0)</dt>
+                                <dd><code>q4</code> stores weights in 4 bits, reducing download size and memory use. <code>q0</code> keeps them unquantized and uses more memory.</dd>
+                            </div>
+                            <div>
+                                <dt>Compute format (f16 or f32)</dt>
+                                <dd><code>f16</code> uses 16-bit numbers during generation; <code>f32</code> uses 32-bit numbers and generally needs more memory.</dd>
+                            </div>
+                            <div>
+                                <dt>Examples</dt>
+                                <dd><code>q4f16_1-MLC</code> combines 4-bit weights with 16-bit compute. <code>q4f32_1-MLC</code> uses the same weights with 32-bit compute.</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="download-controls">
+                        <label class="visually-hidden" for="model-selection">Model format</label>
+                        <select id="model-selection"></select>
+                        <button id="download" type="button">Download</button>
+                    </div>
+                </div>
+                <p id="download-status" class="download-status hidden" aria-live="polite"></p>
+            </section>
         </section>
 
         <!-- CHAT VIEW -->

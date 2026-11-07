@@ -5,6 +5,13 @@ import { logger } from "../utils/logger.js";
 export const availableModels = webllm.prebuiltAppConfig.model_list.map(
   (m) => m.model_id,
 );
+export const availableModelCardUrls = new Map(
+  webllm.prebuiltAppConfig.model_list.map((model) => [
+    model.model_id,
+    model.model,
+  ]),
+);
+export const hasModelInCache = webllm.hasModelInCache;
 
 // Callback function for initializing progress
 export function updateEngineInitProgressCallback(report) {
