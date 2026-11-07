@@ -21,6 +21,7 @@
 - `vite.config.js`: Contains Vite configuration, entry points, CSS imports, and other build/serve settings.
 - `eslint.config.js`: ESLint configuration defining linting rules and target files; JavaScript files use LF line endings.
 - `package.json`: Contains project metadata, dependencies, and npm script commands.
+- `public/assets/`: Contains SVG icons named for the model series in `src/models/model_data.json` and a `link.svg` icon. Series use LobeHub creator logos where no dedicated model-series icon is available; `tinyllama.svg` embeds the official TinyLlama mascot.
 
 - `src/index.html`: The main HTML entry point for the application, contains raw HTML, import maps, and the shared user-facing error notification.
 - `src/index.js`: The primary JavaScript entry point; initializes application modules and global error handlers.

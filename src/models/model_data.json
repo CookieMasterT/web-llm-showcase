@@ -21,6 +21,7 @@
       "id": "llama",
       "name": "Llama",
       "creator": "Meta",
+      "icon": "/llama.svg",
       "description": "Meta's general-purpose language model family. Instruct and chat versions are tuned to follow prompts and have a range of model sizes and memory requirements.",
       "modelCardUrl": "https://huggingface.co/collections/meta-llama/metas-llama-32-language-models-and-evals",
       "models": [
@@ -117,6 +118,7 @@
       "id": "deepseek",
       "name": "DeepSeek R1 Distill",
       "creator": "DeepSeek",
+      "icon": "/deepseek.svg",
       "description": "Reasoning models distilled from DeepSeek R1 into smaller Qwen and Llama models. They are intended for multi-step reasoning and can be more demanding than similarly sized general chat models.",
       "modelCardUrl": "https://huggingface.co/models?search=DeepSeek-R1-Distill",
       "models": [
@@ -148,6 +150,7 @@
       "id": "hermes",
       "name": "Hermes",
       "creator": "Nous Research",
+      "icon": "/hermes.svg",
       "description": "Nous Research's instruction-tuned conversational models, built on several underlying model families. The underlying base model and parameter count vary by release.",
       "modelCardUrl": "https://huggingface.co/models?search=Hermes&author=NousResearch",
       "models": [
@@ -209,6 +212,7 @@
       "id": "phi",
       "name": "Phi",
       "creator": "Microsoft",
+      "icon": "/phi.svg",
       "description": "Microsoft's compact language model family. The available releases include small instruction-following models and a vision-language model.",
       "modelCardUrl": "https://huggingface.co/models?search=Phi&author=microsoft",
       "models": [
@@ -292,6 +296,7 @@
       "id": "mistral",
       "name": "Mistral",
       "creator": "Mistral AI",
+      "icon": "/mistral.svg",
       "description": "Mistral AI's compact language models, including general instruction models and Ministral variants. Base, reasoning, and instruction-tuned models have different intended uses.",
       "modelCardUrl": "https://huggingface.co/models?search=Mistral&author=mistralai",
       "models": [
@@ -353,6 +358,7 @@
       "id": "smollm",
       "name": "SmolLM",
       "creator": "Hugging Face",
+      "icon": "/smollm.svg",
       "description": "Hugging Face's small language models, designed to run with modest resources. The included Instruct models are tuned for following chat-style prompts.",
       "modelCardUrl": "https://huggingface.co/models?search=SmolLM2&author=HuggingFaceTB",
       "models": [
@@ -397,6 +403,7 @@
       "id": "gemma",
       "name": "Gemma",
       "creator": "Google",
+      "icon": "/gemma.svg",
       "description": "Google's family of lightweight open models. The available instruction-tuned and chat-tuned releases support general conversational and text tasks.",
       "modelCardUrl": "https://huggingface.co/models?search=Gemma&author=google",
       "models": [
@@ -462,6 +469,7 @@
       "id": "olmo",
       "name": "OLMo",
       "creator": "Allen Institute for AI",
+      "icon": "/olmo.svg",
       "description": "The Allen Institute for AI's open language models, released with research and training resources. These Instruct variants are tuned for assistant-style use.",
       "modelCardUrl": "https://huggingface.co/models?search=OLMo&author=allenai",
       "models": [
@@ -493,6 +501,7 @@
       "id": "qwen",
       "name": "Qwen",
       "creator": "Alibaba Cloud",
+      "icon": "/qwen.svg",
       "description": "Alibaba Cloud's Qwen family spans general-purpose, coding, math, and reasoning models in multiple sizes. Instruct models are tuned for following conversational prompts.",
       "modelCardUrl": "https://huggingface.co/models?search=Qwen&author=Qwen",
       "models": [
@@ -752,6 +761,7 @@
       "id": "stablelm",
       "name": "StableLM",
       "creator": "Stability AI",
+      "icon": "/stablelm.svg",
       "description": "Stability AI's compact language-model family. The included Zephyr variant is chat-oriented and has a small parameter count.",
       "modelCardUrl": "https://huggingface.co/models?search=StableLM&author=stabilityai",
       "models": [
@@ -774,6 +784,7 @@
       "id": "redpajama",
       "name": "RedPajama INCITE",
       "creator": "Together AI",
+      "icon": "/redpajama.svg",
       "description": "An open language-model family created through the RedPajama project. The listed INCITE Chat model is instruction-tuned for conversational use.",
       "modelCardUrl": "https://huggingface.co/models?search=RedPajama-INCITE&author=togethercomputer",
       "models": [
@@ -796,6 +807,7 @@
       "id": "tinyllama",
       "name": "TinyLlama",
       "creator": "TinyLlama contributors",
+      "icon": "/tinyllama.svg",
       "description": "A compact, community-developed Llama-based model series designed to make local inference accessible. Chat variants are tuned for dialogue.",
       "modelCardUrl": "https://huggingface.co/models?search=TinyLlama&author=TinyLlama",
       "models": [
