@@ -216,10 +216,7 @@ function addModelBadges(container, model) {
     container.append(makeBadge("Currently loaded", "loaded-badge"));
   } else if (isModelCached(model)) {
     container.append(makeBadge("Already downloaded", "cached-badge"));
-  } else if (cacheCheckStatus === "checking") {
-    container.append(makeBadge("Checking downloads", "checking-badge"));
-  }
-  if (isModelRecent(model)) {
+  } else if (isModelRecent(model)) {
     container.append(makeBadge("Recently used", "recent-badge"));
   }
 }
@@ -231,6 +228,9 @@ function makeExternalLink(url, label, className = "model-card-link") {
   link.href = url;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
+  link.onclick = (event) => {
+    event.stopPropagation();
+  };
 
   const icon = document.createElement("img");
   icon.src = "/link.svg";
@@ -276,14 +276,14 @@ function makeModelCard(model, { returnPage = "landing" } = {}) {
   info.append(heading, metadata);
   main.append(info);
   selectButton.append(main);
-  if (badges.childElementCount) selectButton.append(badges);
+  selectButton.append(badges);
   selectButton.addEventListener("click", () =>
     showModelDetails(model, returnPage),
   );
   card.append(selectButton);
 
   const link = makeExternalLink(model.modelCardUrl, "Model card");
-  if (link) card.append(link);
+  if (link) selectButton.append(link);
   return card;
 }
 
@@ -344,7 +344,6 @@ function makeSeriesCard(series, query) {
   selectButton.append(main);
 
   const summary = document.createElement("p");
-  summary.className = "series-card-description";
   summary.textContent = series.description;
   selectButton.append(summary);
 
@@ -369,7 +368,7 @@ function makeSeriesCard(series, query) {
   selectButton.addEventListener("click", () => showSeries(series));
   card.append(selectButton);
   const link = makeExternalLink(series.modelCardUrl, "Model family");
-  if (link) card.append(link);
+  if (link) selectButton.append(link);
   return card;
 }
 
@@ -486,8 +485,7 @@ function showPage(pageId) {
   });
   document.getElementById("setup-stage-instruction").textContent = {
     "setup-landing": "Choose a model family, or search for a model by name.",
-    "series-models":
-      "Choose a model variant. For the best experience, choose a model with 8B parameters or fewer.",
+    "series-models": "Choose a model variant.",
     "model-details": "Choose a model format, then download it to this browser.",
   }[pageId];
 }
@@ -625,7 +623,7 @@ function showModelDetails(model, returnPage, preserveScroll = false) {
   badges.className = "model-badges";
   addModelBadges(badges, model);
   header.append(titleBlock);
-  if (badges.childElementCount) header.append(badges);
+  header.append(badges);
   heading.append(header);
 
   if (model.description) {
@@ -675,8 +673,7 @@ function showModelDetails(model, returnPage, preserveScroll = false) {
       tags.push("Currently loaded");
     } else if (cachedVariants.has(variant)) {
       tags.push("Already downloaded");
-    }
-    if (isVariantRecent(variant)) tags.push("Recently used");
+    } else if (isVariantRecent(variant)) tags.push("Recently used");
     option.textContent = `${formatVariant(variant)}${
       tags.length ? ` · ${tags.join(" · ")}` : ""
     }`;

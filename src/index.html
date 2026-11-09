@@ -32,7 +32,7 @@
             <header class="setup-heading">
                 <p class="setup-step-label">STEP 1 · MODEL SETUP</p>
                 <h2>Choose a model to run in your browser</h2>
-                <p>Parameters are the learned weights that shape a model. For the best experience in your browser, aim for a model with 8B parameters or fewer.</p>
+                <p>Parameters are the learned weights that shape a model. For the best experience in your browser, aim for a model with 8 billion parameters or fewer.</p>
                 <nav class="setup-progress" aria-label="Model setup progress">
                     <ol>
                         <li data-setup-step="1" aria-current="step"><span>1</span> Series</li>
@@ -60,7 +60,7 @@
                         <div>
                             <p class="setup-eyebrow">ON THIS DEVICE</p>
                             <h3>Ready to use</h3>
-                            <p>Models you have recently used or already downloaded on this device.</p>
+                            <p>Models you have recently used or models that are already downloaded on this device.</p>
                         </div>
                     </div>
                     <div id="personal-models" class="model-card-grid personal-model-grid"></div>
@@ -96,15 +96,11 @@
                         <dl class="format-explainer">
                             <div>
                                 <dt>Weights (q4 or q0)</dt>
-                                <dd><code>q4</code> stores weights in 4 bits, reducing download size and memory use. <code>q0</code> keeps them unquantized and uses more memory.</dd>
+                                <dd>4 bit quantized <code>q4</code> stores weights in 4 bits, reducing download size and memory use. Unquantized <code>q0</code> keeps them as is and uses more memory.</dd>
                             </div>
                             <div>
                                 <dt>Compute format (f16 or f32)</dt>
-                                <dd><code>f16</code> uses 16-bit numbers during generation; <code>f32</code> uses 32-bit numbers and generally needs more memory.</dd>
-                            </div>
-                            <div>
-                                <dt>Examples</dt>
-                                <dd><code>q4f16_1-MLC</code> combines 4-bit weights with 16-bit compute. <code>q4f32_1-MLC</code> uses the same weights with 32-bit compute.</dd>
+                                <dd>floating point <code>f16</code> uses 16-bit numbers during generation; floating point <code>f32</code> uses 32-bit numbers and generally needs more memory.</dd>
                             </div>
                         </dl>
                     </div>

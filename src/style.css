@@ -217,6 +217,7 @@ html {
 .model-card-grid,
 .series-card-grid {
     display: grid;
+    grid-auto-flow: dense;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr));
     gap: 14px;
 }
@@ -233,6 +234,7 @@ html {
     min-width: 0;
     overflow: hidden;
     background: #1b1b1b;
+    margin-bottom: 1rem;
     border: 1px solid #363636;
     border-radius: 10px;
     transition:
@@ -275,6 +277,8 @@ html {
     color: inherit;
     text-align: left;
     background: transparent;
+    break-inside: avoid;
+    user-select: none;
     border: 0;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -289,6 +293,10 @@ html {
     background: #20372a;
 }
 
+.model-card-select .model-badges{
+    margin-bottom: -8px;
+}
+
 .model-card-main {
     display: flex;
     align-items: flex-start;
@@ -297,6 +305,7 @@ html {
 
 .model-card-info {
     flex: 1;
+    user-select: none;
 }
 
 .model-card-select:focus-visible,
@@ -319,6 +328,7 @@ html {
     flex: 0 0 38px;
     object-fit: contain;
     border-radius: 9px;
+    user-select: none;
 }
 
 .series-card-icon {
@@ -361,6 +371,7 @@ html {
     font-size: 1.05rem;
     font-weight: 700;
     line-height: 1.35;
+    user-select: all;
 }
 
 .model-card-metadata,
@@ -369,24 +380,21 @@ html {
     font-size: 0.87rem;
 }
 
-.series-card-description {
-    margin: 0;
-    padding: 6px 10px 12px 12px;
-    color: #c2c2c2;
-    font-size: 0.88rem;
-    line-height: 1.45;
-    background: #181818;
-    border-top: 1px solid #222;
-    border-radius: 0 0 4px 4px;
-    transition: background-color 0.2s ease;
-}
-
 .series-card-select:hover:not(:disabled) .series-card-description {
     background: #252d34;
 }
 
+.series-card-select p
+{
+    margin-top: 0;
+}
+
+.series-card-select .series-card-matches
+{
+    margin-top: -16px;
+}
+
 .series-card-matches {
-    margin: 0;
     padding: 10px;
     color: #b7dcff;
     font-size: 0.82rem;
@@ -400,6 +408,7 @@ html {
 
 .series-card-status {
     padding: 0;
+    margin: -12px 0;
 }
 
 .series-choice-card:focus-within {
@@ -422,6 +431,8 @@ html {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    user-select: none;
+    min-height: 25px;
 }
 
 .model-badge {
@@ -474,11 +485,19 @@ html {
     align-items: center;
     gap: 6px;
     width: fit-content;
-    margin: 0 14px 10px;
+    margin: -12px;
+    margin-top: auto;
+    padding: 0 14px 10px;
     min-height: 34px;
     color: #85c7ff;
     font-size: 0.82rem;
     text-decoration: none;
+    user-select: none;
+}
+
+.model-detail-link
+{
+    padding: 0;
 }
 
 .series-choice-card > .model-card-link {
@@ -681,7 +700,6 @@ html {
 .format-explainer {
     display: grid;
     gap: 10px;
-    max-width: 1200px;
     margin: 0;
 }
 
