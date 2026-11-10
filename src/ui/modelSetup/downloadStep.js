@@ -25,6 +25,11 @@ import {
 } from "./shared.js";
 
 const CACHE_CHECK_CONCURRENCY = 8;
+const PROGRESS_REFRESH_INTERVAL = 1000;
+const progressStages = new Map();
+let progressTimer = null;
+let activeProgressPhase = null;
+let cachedBeforeLoad = false;
 
 function formatVariant(variantId) {
   const match = variantId.match(
@@ -63,6 +68,285 @@ function getPreferredVariant(model) {
       /-q4f16_1-MLC(?:-|$)/i.test(variant) ? 0 : 1;
     return preferredFormat(a) - preferredFormat(b);
   })[0];
+}
+
+function getProgressStage(phase) {
+  if (!progressStages.has(phase)) {
+    const element = document.querySelector(
+      `#download-status [data-phase="${phase}"]`,
+    );
+    progressStages.set(phase, {
+      element,
+      bar: element.querySelector(".segmented-progress"),
+      state: element.querySelector(".loading-step-state"),
+      count: element.querySelector(".loading-count"),
+      elapsed: element.querySelector(".loading-elapsed"),
+      eta: element.querySelector(".loading-eta"),
+      startedAt: null,
+      completed: 0,
+      total: 0,
+    });
+  }
+  return progressStages.get(phase);
+}
+
+function formatDuration(seconds) {
+  const roundedSeconds = Math.max(0, Math.ceil(seconds));
+  if (roundedSeconds < 60) return `${roundedSeconds} sec`;
+  const minutes = Math.floor(roundedSeconds / 60);
+  const remainingSeconds = roundedSeconds % 60;
+  return remainingSeconds
+    ? `${minutes} min ${remainingSeconds} sec`
+    : `${minutes} min`;
+}
+
+function updateProgressBar(stage, completed, total) {
+  if (stage.total !== total) {
+    stage.total = total;
+    const segments = document.createDocumentFragment();
+    for (let index = 0; index < total; index += 1) {
+      const segment = document.createElement("span");
+      segment.className = "progress-segment";
+      segment.setAttribute("aria-hidden", "true");
+      segments.append(segment);
+    }
+    stage.bar.replaceChildren(segments);
+    stage.bar.setAttribute("aria-valuemax", String(total));
+  }
+
+  stage.completed = Math.min(completed, total);
+  [...stage.bar.children].forEach((segment, index) => {
+    segment.classList.toggle("is-filled", index < stage.completed);
+  });
+  stage.bar.setAttribute("aria-valuenow", String(stage.completed));
+  stage.bar.setAttribute(
+    "aria-valuetext",
+    `${stage.completed} of ${stage.total} model shards`,
+  );
+  stage.count.textContent = `${stage.completed} of ${stage.total} shards`;
+}
+
+function updateProgressTiming(phase, now = performance.now()) {
+  const stage = getProgressStage(phase);
+  if (stage.startedAt === null) return;
+
+  const elapsed = (now - stage.startedAt) / 1000;
+  stage.elapsed.textContent = `Elapsed: ${formatDuration(elapsed)}`;
+  if (stage.state.dataset.status === "complete") {
+    stage.eta.textContent = "Complete";
+    return;
+  }
+  if (
+    stage.state.textContent === "Finishing setup" ||
+    (stage.total > 0 && stage.completed >= stage.total)
+  ) {
+    stage.eta.textContent = "Estimated time remaining: finishing setup…";
+    return;
+  }
+
+  const remaining =
+    stage.completed > 0 && stage.total > stage.completed
+      ? elapsed * (stage.total / stage.completed - 1)
+      : null;
+  stage.eta.textContent =
+    remaining === null
+      ? "Estimated time remaining: Calculating…"
+      : `Estimated time remaining: about ${formatDuration(remaining)}`;
+}
+
+function setProgressStageState(phase, status, statusText) {
+  const stage = getProgressStage(phase);
+  stage.element.dataset.status = status;
+  stage.state.textContent = statusText;
+  stage.element.classList.toggle("is-active", status === "active");
+  stage.element.classList.toggle("is-complete", status === "complete");
+}
+
+function markStageComplete(phase, { skipped = false } = {}) {
+  const stage = getProgressStage(phase);
+  if (skipped && stage.total === 0) {
+    updateProgressBar(stage, 1, 1);
+    stage.count.textContent = "Already downloaded";
+  }
+  if (stage.startedAt !== null) {
+    updateProgressTiming(phase);
+  }
+  setProgressStageState(
+    phase,
+    "complete",
+    skipped ? "Already downloaded" : "Loaded",
+  );
+  stage.eta.textContent = skipped
+    ? "Skipped, because this model has already been downloaded"
+    : "Complete";
+}
+
+function activateProgressStage(phase) {
+  const stage = getProgressStage(phase);
+  if (activeProgressPhase === phase && stage.startedAt !== null) return;
+
+  if (activeProgressPhase && activeProgressPhase !== phase) {
+    markStageComplete(activeProgressPhase, {
+      skipped: activeProgressPhase === "download" && cachedBeforeLoad,
+    });
+  }
+
+  activeProgressPhase = phase;
+  stage.startedAt = performance.now();
+  setProgressStageState(phase, "active", "In progress");
+  updateProgressTiming(phase);
+}
+
+function showModelProgress(modelId) {
+  const status = document.getElementById("download-status");
+  status.dataset.modelId = modelId;
+  status.classList.remove("hidden");
+  status.querySelector(".download-complete").classList.add("hidden");
+  status.querySelector(".model-size").classList.add("hidden");
+  document.getElementById("proceed-to-chat").classList.add("hidden");
+  activeProgressPhase = null;
+  cachedBeforeLoad = false;
+
+  for (const phase of ["download", "load"]) {
+    const stage = getProgressStage(phase);
+    stage.startedAt = null;
+    stage.completed = 0;
+    stage.total = 0;
+    stage.bar.replaceChildren();
+    stage.bar.setAttribute("aria-valuemax", "1");
+    stage.bar.setAttribute("aria-valuenow", "0");
+    stage.bar.removeAttribute("aria-valuetext");
+    stage.count.textContent = "Waiting for progress";
+    stage.elapsed.textContent = "Elapsed: 0 sec";
+    stage.eta.textContent = "Estimated time remaining: Calculating…";
+    setProgressStageState(phase, "waiting", "Waiting");
+  }
+  getProgressStage("download").state.textContent = "Checking browser storage…";
+}
+
+function beginModelProgress(isCached) {
+  cachedBeforeLoad = isCached;
+  if (isCached) {
+    markStageComplete("download", { skipped: true });
+    activateProgressStage("load");
+  } else {
+    activateProgressStage("download");
+  }
+
+  progressTimer = window.setInterval(() => {
+    if (activeProgressPhase) updateProgressTiming(activeProgressPhase);
+  }, PROGRESS_REFRESH_INTERVAL);
+}
+
+function onModelInitProgress(event) {
+  const report = event.detail;
+  if (!report || typeof report.text !== "string") return;
+
+  const shardProgress = report.text.match(/\[(\d+)\s*\/\s*(\d+)\]/);
+
+  /*
+  Estimate model size code, do not apply until size management system
+  const sizeProgress = report.text.match(/([\d.]+)MB (?:fetched|loaded)/);
+
+  const modelSize = document.querySelector(".model-size");
+  if (sizeProgress && shardProgress && modelSize.classList.contains("hidden")) {
+    const bytesPerShard =
+      (Number(sizeProgress[1]) * 1024 * 1024) / Number(shardProgress[1]);
+    const estimatedMegabytes =
+      (bytesPerShard * Number(shardProgress[2])) / (1024 * 1024);
+    const estimatedSize =
+      estimatedMegabytes >= 1024
+        ? `${(estimatedMegabytes / 1024).toFixed(1)} GB`
+        : `${Math.round(estimatedMegabytes)} MB`;
+    modelSize.querySelector("span").textContent = `about ${estimatedSize}`;
+    modelSize.classList.remove("hidden");
+  }
+    */
+
+  if (report.text.startsWith("Fetching param cache")) {
+    if (cachedBeforeLoad && activeProgressPhase === "load") {
+      const downloadStage = getProgressStage("download");
+      downloadStage.startedAt = null;
+      downloadStage.completed = 0;
+      downloadStage.total = 0;
+      downloadStage.bar.replaceChildren();
+    }
+    cachedBeforeLoad = false;
+    activateProgressStage("download");
+    if (shardProgress) {
+      updateProgressBar(
+        getProgressStage("download"),
+        Number(shardProgress[1]),
+        Number(shardProgress[2]),
+      );
+      updateProgressTiming("download");
+    }
+  } else if (report.text.startsWith("Loading model from cache")) {
+    if (activeProgressPhase === "download") {
+      markStageComplete("download");
+    } else if (cachedBeforeLoad) {
+      const downloadStage = getProgressStage("download");
+      updateProgressBar(
+        downloadStage,
+        Number(shardProgress?.[2] ?? 1),
+        Number(shardProgress?.[2] ?? 1),
+      );
+      markStageComplete("download", { skipped: true });
+    }
+    activateProgressStage("load");
+    if (shardProgress) {
+      updateProgressBar(
+        getProgressStage("load"),
+        Number(shardProgress[1]),
+        Number(shardProgress[2]),
+      );
+      updateProgressTiming("load");
+    }
+  } else if (report.text.startsWith("Finish loading on ")) {
+    if (activeProgressPhase === "download") {
+      markStageComplete("download");
+    }
+    activateProgressStage("load");
+    setProgressStageState("load", "active", "Finishing setup");
+    updateProgressTiming("load");
+  }
+}
+
+function completeModelProgress() {
+  if (progressTimer !== null) {
+    window.clearInterval(progressTimer);
+    progressTimer = null;
+  }
+  if (activeProgressPhase) {
+    const stage = getProgressStage(activeProgressPhase);
+    if (stage.total > 0) updateProgressBar(stage, stage.total, stage.total);
+    markStageComplete(activeProgressPhase);
+  }
+  for (const phase of ["download", "load"]) {
+    const stage = getProgressStage(phase);
+    if (stage.state.dataset.status !== "complete") {
+      markStageComplete(phase, {
+        skipped: phase === "download" && cachedBeforeLoad,
+      });
+    }
+  }
+  document.getElementById("download-status").dataset.modelId =
+    state.selectedModel;
+  document
+    .getElementById("download-status")
+    .querySelector(".download-complete")
+    .classList.remove("hidden");
+  document.getElementById("proceed-to-chat").classList.remove("hidden");
+  activeProgressPhase = null;
+}
+
+function clearModelProgress() {
+  if (progressTimer !== null) {
+    window.clearInterval(progressTimer);
+    progressTimer = null;
+  }
+  document.getElementById("download-status").classList.add("hidden");
+  activeProgressPhase = null;
 }
 
 export function showModelDetails(
@@ -160,9 +444,6 @@ export function showModelDetails(
   select.disabled = state.isDownloading;
   state.selectedModel = select.value;
 
-  if (!state.isDownloading) {
-    document.getElementById("download-status").classList.add("hidden");
-  }
   showPage("model-details");
   if (preserveScroll) {
     requestAnimationFrame(() => {
@@ -186,24 +467,28 @@ export function updateDownloadButtonState() {
 
   if (state.isDownloading) {
     downloadBtn.disabled = true;
-    downloadBtn.textContent = "Downloading";
+    downloadBtn.textContent = "Preparing…";
     downloadBtn.title = "";
-    downloadBtn.classList.add("downloading");
   } else if (modelIsLoaded) {
     downloadBtn.disabled = true;
     downloadBtn.textContent = "Loaded";
     downloadBtn.title = "This model is already loaded.";
-    downloadBtn.classList.remove("downloading");
   } else if (modelIsDownloaded) {
     downloadBtn.disabled = false;
     downloadBtn.textContent = "Load";
     downloadBtn.title = "Load this downloaded model.";
-    downloadBtn.classList.remove("downloading");
   } else {
     downloadBtn.disabled = false;
     downloadBtn.textContent = "Download";
     downloadBtn.title = "";
-    downloadBtn.classList.remove("downloading");
+  }
+
+  if (
+    !state.isDownloading &&
+    document.getElementById("download-status").dataset.modelId !==
+      currentSelection
+  ) {
+    document.getElementById("download-status").classList.add("hidden");
   }
 }
 
@@ -254,7 +539,7 @@ async function updateCachedVariants(refreshModelChoiceViews) {
   refreshModelChoiceViews();
 }
 
-function startDownload(refreshModelChoiceViews) {
+async function startDownload(refreshModelChoiceViews) {
   if (state.isDownloading) return;
   if (state.loadedModel && state.selectedModel === state.loadedModel) return;
 
@@ -272,6 +557,7 @@ function startDownload(refreshModelChoiceViews) {
   setSetupControlsDisabled(true);
   updateDownloadButtonState();
   allowNavigation(false);
+  showModelProgress(downloadingModel);
 
   const sendBtn = document.getElementById("send");
   if (sendBtn) sendBtn.disabled = true;
@@ -282,29 +568,36 @@ function startDownload(refreshModelChoiceViews) {
     engine.interruptGenerate();
   }
 
-  logger.info("Download initiated for model:", downloadingModel);
-
-  initializeWebLLMEngine(downloadingModel)
-    .then(() => {
-      logger.info("Model download complete.");
-      state.isDownloading = false;
-      setSetupControlsDisabled(false);
-      saveRecentModel(model, downloadingModel);
-      cachedVariants.add(downloadingModel);
-      refreshModelChoiceViews();
-      updateDownloadButtonState();
-      if (sendBtn) sendBtn.disabled = false;
-      allowNavigation(true);
-    })
-    .catch((error) => {
-      logger.error("Model download failed:", error);
-      reportError(error, "Model download failed");
-      state.isDownloading = false;
-      setSetupControlsDisabled(false);
-      allowNavigation(state.loadedModel !== null);
-      updateDownloadButtonState();
-      if (sendBtn) sendBtn.disabled = state.loadedModel === null;
-    });
+  try {
+    const isCached = await hasModelInCache(downloadingModel);
+    if (isCached) cachedVariants.add(downloadingModel);
+    else cachedVariants.delete(downloadingModel);
+    logger.info(
+      isCached ? "Loading stored model:" : "Downloading model:",
+      downloadingModel,
+    );
+    beginModelProgress(isCached);
+    await initializeWebLLMEngine(downloadingModel);
+    logger.info("Model loaded successfully.");
+    state.isDownloading = false;
+    setSetupControlsDisabled(false);
+    saveRecentModel(model, downloadingModel);
+    cachedVariants.add(downloadingModel);
+    completeModelProgress();
+    refreshModelChoiceViews();
+    updateDownloadButtonState();
+    if (sendBtn) sendBtn.disabled = false;
+    allowNavigation(true);
+  } catch (error) {
+    logger.error("Model loading failed:", error);
+    reportError(error, "Model loading failed");
+    state.isDownloading = false;
+    setSetupControlsDisabled(false);
+    clearModelProgress();
+    allowNavigation(state.loadedModel !== null);
+    updateDownloadButtonState();
+    if (sendBtn) sendBtn.disabled = state.loadedModel === null;
+  }
 }
 
 export function initDownloadStep({ showSeries, refreshModelChoiceViews }) {
@@ -314,6 +607,10 @@ export function initDownloadStep({ showSeries, refreshModelChoiceViews }) {
       state.selectedModel = event.target.value;
       updateDownloadButtonState();
     });
+  document.addEventListener("model-init-progress", onModelInitProgress);
+  document.getElementById("proceed-to-chat").addEventListener("click", () => {
+    document.getElementById("nav-chat").click();
+  });
 
   document.getElementById("back-to-models").addEventListener("click", () => {
     if (

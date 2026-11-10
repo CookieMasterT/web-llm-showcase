@@ -110,7 +110,35 @@
                         <button id="download" type="button">Download</button>
                     </div>
                 </div>
-                <p id="download-status" class="download-status hidden" aria-live="polite"></p>
+                <div id="download-status" class="download-progress hidden">
+                    <p class="model-size hidden" aria-live="polite">Estimated model size: <span></span></p>
+                    <section class="loading-step download-step" data-phase="download" aria-labelledby="download-step-title">
+                        <div class="loading-step-header">
+                            <h4 id="download-step-title">Downloading model</h4>
+                            <span class="loading-step-state" aria-live="polite">Waiting</span>
+                        </div>
+                        <div class="segmented-progress" role="progressbar" aria-label="Downloading model" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"></div>
+                        <div class="loading-step-meta">
+                            <span class="loading-count">Waiting for progress</span>
+                            <span class="loading-elapsed">Elapsed: 0 sec</span>
+                            <span class="loading-eta">Estimated time remaining: Calculating…</span>
+                        </div>
+                    </section>
+                    <section class="loading-step load-step" data-phase="load" aria-labelledby="load-step-title">
+                        <div class="loading-step-header">
+                            <h4 id="load-step-title">Loading model</h4>
+                            <span class="loading-step-state" aria-live="polite">Waiting</span>
+                        </div>
+                        <div class="segmented-progress" role="progressbar" aria-label="Loading model" aria-valuemin="0" aria-valuemax="1" aria-valuenow="0"></div>
+                        <div class="loading-step-meta">
+                            <span class="loading-count">Waiting for progress</span>
+                            <span class="loading-elapsed">Elapsed: 0 sec</span>
+                            <span class="loading-eta">Estimated time remaining: Calculating…</span>
+                        </div>
+                    </section>
+                    <p class="download-complete hidden" role="status">Your model is loaded, you are ready to begin inference</p>
+                    <button id="proceed-to-chat" class="proceed-to-chat hidden" type="button">Proceed to chat</button>
+                </div>
             </section>
         </section>
 

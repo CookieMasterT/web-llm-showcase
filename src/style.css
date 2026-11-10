@@ -776,22 +776,149 @@ html {
     cursor: not-allowed;
 }
 
-#download.downloading {
-    color: #e0e0e0;
-    background-color: #0056b3;
-    border-color: #004085;
-    animation: downloadPulse 1.5s infinite ease-in-out;
+.download-progress {
+    display: grid;
+    gap: 18px;
+    width: min(100%, 1260px);
+    margin: 20px auto 0;
 }
 
-.download-status {
-    max-width: 900px;
-    padding: 12px 14px;
-    color: #c8dff2;
-    overflow-wrap: anywhere;
-    background: #1b2b38;
-    border: 1px solid #31516b;
-    border-radius: 6px;
+.download-progress.hidden {
+    display: none;
+}
+
+.model-size {
+    margin: 0;
+    color: #ddd;
+    text-align: center;
+}
+
+.model-size.hidden {
+    display: none;
+}
+
+.loading-step {
+    display: grid;
+    gap: 8px;
+    width: 100%;
+}
+
+.loading-step + .loading-step {
+    padding-top: 14px;
+    border-top: 1px solid #363636;
+}
+
+.loading-step-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.loading-step-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px;
+    color: #aaa;
+    font-size: 0.82rem;
+}
+
+.loading-count {
+    text-align: left;
+}
+
+.loading-elapsed {
+    text-align: center;
+}
+
+.loading-eta {
+    text-align: right;
+}
+
+.loading-step-header h4 {
+    margin: 0;
+    color: #e5e5e5;
+    font-size: 0.95rem;
+}
+
+.loading-step-state {
+    color: #aaa;
+    font-size: 0.82rem;
+}
+
+.loading-step.is-active .loading-step-state {
+    color: #fff;
+}
+
+.loading-step.is-complete .loading-step-state {
+    color: #83d89b;
+}
+
+.download-step.is-active .loading-step-state,
+.download-step.is-complete .loading-step-state {
+    color: #4a9ee8;
+}
+
+.segmented-progress {
+    display: grid;
+    grid-auto-columns: minmax(1px, 1fr);
+    grid-auto-flow: column;
+    min-height: 10px;
+    overflow: hidden;
+    background: #383838;
+    border: 1px solid #777;
+    border-radius: 5px;
+}
+
+.progress-segment {
+    min-width: 0;
+    background: #383838;
+}
+
+.progress-segment:not(:last-child) {
+    border-right: 1px solid #777;
+}
+
+.download-step .progress-segment.is-filled {
+    background: #1688ff;
+}
+
+.download-step .segmented-progress,
+.download-step .progress-segment:not(:last-child) {
+    border-color: #4a9ee8;
+}
+
+.load-step .progress-segment.is-filled {
+    background: #55b874;
+}
+
+.load-step .segmented-progress,
+.load-step .progress-segment:not(:last-child) {
+    border-color: #398657;
+}
+
+.download-complete {
+    margin: 0;
+    color: #fff;
+    text-align: center;
     line-height: 1.5;
+}
+
+.proceed-to-chat {
+    justify-self: center;
+    padding: 10px 16px;
+    color: #fff;
+    background: #32894d;
+    border: 1px solid #4aa666;
+    border-radius: 6px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+.proceed-to-chat:hover {
+    background: #28743f;
 }
 
 .setup-empty-message {
@@ -843,17 +970,16 @@ html {
     #download {
         width: 100%;
     }
-}
 
-@keyframes downloadPulse {
-    0% {
-        opacity: 1;
+    .loading-step-meta {
+        grid-template-columns: 1fr;
+        gap: 4px;
     }
-    50% {
-        opacity: 0.8;
-    }
-    100% {
-        opacity: 1;
+
+    .loading-count,
+    .loading-elapsed,
+    .loading-eta {
+        text-align: center;
     }
 }
 

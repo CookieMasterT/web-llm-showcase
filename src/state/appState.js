@@ -10,7 +10,7 @@ export const messages = [
 export const state = {
   selectedModel: DEFAULT_MODEL,
   loadedModel: null, // the currently loaded/running model, or null if none loaded
-  isDownloading: false, // if a model is currently downloading/initializing
+  isDownloading: false, // if a model is being downloaded or loaded
   isPaused: false, // if the model should pause due to the user hitting "PAUSE".
   isStopped: false, // if the model is stopping due to the user hitting "STOP", notably reset before each query.
   isInferring: false, // if the model is currently generating

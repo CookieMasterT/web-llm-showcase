@@ -28,15 +28,15 @@
 - `src/style.css`: Global styles and CSS rules, including the shared error notification.
 - `src/config/constants.js`: Application constants and default configuration values, contains the default model, system prompt and available navigation ids.
 - `src/services/chatService.js`: A service for chatView.js, handles the async loop for streaming tokens from the model.
-- `src/services/webllmEngine.js`: A service for modelSetup.js and chatService.js, handles initializing and reloading the WebLLM backend, unloading models, and listing available models.
-- `src/state/appState.js`: Contains the application state, including the current messages, the currently selected model, the currently loaded model, downloading state, whether inference is stopped, paused, generating (inference), and the active `completion` iterator (null when idle).
+- `src/services/webllmEngine.js`: A service for modelSetup.js and chatService.js, handles initializing and reloading the WebLLM backend, unloading models, listing available models, and forwarding model-load progress reports.
+- `src/state/appState.js`: Contains the application state, including the current messages, the currently selected model, the currently loaded model, model download/loading state, whether inference is stopped, paused, generating (inference), and the active `completion` iterator (null when idle).
 - `src/ui/chatView.js`: Contains functions used to show the chat UI and report inference errors to the user.
 - `src/ui/controls.js`: Binds the 3 inference control buttons: stop, pause and reset, does NOT control the slider, or the message input box.
 - `src/ui/modelSetup.js`: Preserves the model setup module entry point and re-exports its initializer.
 - `src/ui/modelSetup/index.js`: Orchestrates the Series, Model, and Download setup steps and refreshes their views.
 - `src/ui/modelSetup/seriesStep.js`: Renders the model-series catalog and handles the Series selection step.
 - `src/ui/modelSetup/modelStep.js`: Renders model details and handles the Model selection step.
-- `src/ui/modelSetup/downloadStep.js`: Handles model format download/loading, cache checks, and download button state.
+- `src/ui/modelSetup/downloadStep.js`: Handles model format download/loading, cache checks, segmented progress, completion navigation, and download button state.
 - `src/ui/modelSetup/shared.js`: Provides shared model catalog state and reusable setup UI helpers used across steps.
 - `src/ui/navigation.js`: Handles the navigation bar (on the left), and whether or not you are allowed to switch to a certain view. doesn't display anything or handle view changes itself. Exposes a function for blocking / allowing navigation from chat / insights, navigating to chat while a model does not exist shouldn't be allowed as usage will always fail and confuse the user.
 - `src/ui/tokenDiagnosticsView.js`: Contains the token diagnostics view, it is split into 2 columns, the left column contains the chosen tokens and special tokens, and the right column contains the current tokens probabilities over all tokens.

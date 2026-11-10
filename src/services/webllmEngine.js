@@ -15,9 +15,9 @@ export const hasModelInCache = webllm.hasModelInCache;
 
 // Callback function for initializing progress
 export function updateEngineInitProgressCallback(report) {
-  // todo: convert this to a progress bar
-  //logger.debug("Engine init progress:", report.progress, report.text);
-  document.getElementById("download-status").textContent = report.text;
+  document.dispatchEvent(
+    new CustomEvent("model-init-progress", { detail: report }),
+  );
 }
 
 // Create engine instance
@@ -34,7 +34,6 @@ export async function unloadWebLLMEngine() {
 
 export async function initializeWebLLMEngine() {
   const previousModel = state.loadedModel;
-  document.getElementById("download-status").classList.remove("hidden");
   state.selectedModel = document.getElementById("model-selection").value;
   if (previousModel) {
     logger.info("Unloading previous model:", previousModel);
