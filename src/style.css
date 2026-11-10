@@ -223,7 +223,6 @@ html {
 }
 
 .personal-model-grid {
-    max-width: 900px;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
 }
 
@@ -742,10 +741,8 @@ html {
 }
 
 #model-selection {
-    width: 100%;
     min-width: 0;
     max-width: none;
-    flex: 1 1 0;
     padding: 10px 12px;
     box-sizing: border-box;
     color: #fff;
