@@ -604,11 +604,6 @@ html {
     max-width: 760px;
 }
 
-.series-detail-heading .model-card-link {
-    flex-shrink: 0;
-    margin: 0;
-}
-
 .model-detail-heading {
     display: flex;
     flex-direction: column;

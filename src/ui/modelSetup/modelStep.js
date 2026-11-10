@@ -32,8 +32,8 @@ export function showSeries(
   const description = document.createElement("p");
   description.className = "series-detail-description";
   description.textContent = series.description;
-  const text = document.createElement("div");
-  text.append(title, creator, description);
+  const content = document.createElement("div");
+  content.append(title, creator, description);
   if (series.icon) {
     const icon = document.createElement("img");
     icon.className = "series-detail-icon";
@@ -42,11 +42,11 @@ export function showSeries(
     icon.setAttribute("aria-hidden", "true");
     heading.append(icon);
   }
-  heading.append(text);
 
   const link = makeExternalLink(series.modelCardUrl, "Explore model family");
-  if (link) heading.append(link);
+  if (link) content.append(link);
 
+  heading.append(content);
   const modelList = document.getElementById("series-model-list");
   modelList.replaceChildren();
   for (const model of series.models) {
