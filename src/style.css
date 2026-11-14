@@ -866,9 +866,18 @@ html {
     grid-auto-flow: column;
     min-height: 10px;
     overflow: hidden;
-    background: #383838;
     border: 1px solid #777;
     border-radius: 5px;
+}
+
+.download-step .segmented-progress
+{
+    background-color: #1c4261;
+}
+
+.load-step .segmented-progress 
+{
+    background-color: #20372a;
 }
 
 .progress-segment {
