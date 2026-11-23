@@ -1,0 +1,27 @@
+{
+  "endTokens": [
+    "<|eot_id|>",
+    "<|im_end|>",
+    "<|endoftext|>",
+    "</s>",
+    "<eos>",
+    "[/INST]",
+    "[/s]"
+  ],
+  "tokens": {
+    "<|im_start|>": "Conversation turn start",
+    "<|start_header_id|>": "Message role header",
+    "<|end_header_id|>": "Message role header end",
+    "<|eot_id|>": "End of turn",
+    "<|im_end|>": "End of response",
+    "<|endoftext|>": "End of text",
+    "</s>": "End of sequence",
+    "<eos>": "End of sequence",
+    "[INST]": "Instruction start",
+    "[/INST]": "Instruction end",
+    "[s]": "Sequence start",
+    "[/s]": "Sequence end",
+    "```": "Code fence",
+    "~~~": "Code fence"
+  }
+}

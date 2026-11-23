@@ -2,6 +2,7 @@ import { state, messages } from "../state/appState.js";
 import { DEFAULT_SYSTEM_PROMPT } from "../config/constants.js";
 import { logger } from "../utils/logger.js";
 import { engine } from "../services/webllmEngine.js";
+import { resetSpecialTokens } from "./tokenDiagnosticsView.js";
 
 export function initControls() {
   // Bind Pause control
@@ -65,6 +66,7 @@ export function initControls() {
     // Reset diagnostics UI
     document.getElementById("chosen-tokens-display").innerHTML =
       "As text is generated here, new tokens appear...";
+    resetSpecialTokens();
     document.getElementById("probabilities-chart").innerHTML = "";
     document.getElementById("user-input").value = "";
     document

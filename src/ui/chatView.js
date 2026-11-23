@@ -3,6 +3,7 @@ import { streamingGenerating } from "../services/chatService.js";
 import { logger } from "../utils/logger.js";
 import { reportError } from "../utils/errorHandler.js";
 import { formatAssistantMessage } from "../utils/markdownFormatter.js";
+import { resetSpecialTokens } from "./tokenDiagnosticsView.js";
 
 export function appendMessage(message) {
   const chatBox = document.getElementById("chat-box");
@@ -94,6 +95,7 @@ export function onMessageSend() {
 
   // Reset Chosen Tokens box visual
   document.getElementById("chosen-tokens-display").innerHTML = "";
+  resetSpecialTokens();
 
   const onFinishGenerating = (finalMessage, wasStopped) => {
     logger.debug("AI response finished. Message length:", finalMessage.length);

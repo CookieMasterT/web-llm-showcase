@@ -1,0 +1,22 @@
+{
+  " ": {
+    "mark": "･",
+    "label": "Space"
+  },
+  "\n": {
+    "mark": "¶",
+    "label": "Line break"
+  },
+  "\r": {
+    "mark": "↵",
+    "label": "Carriage return"
+  },
+  "\t": {
+    "mark": "⇥",
+    "label": "Tab"
+  },
+  "\u00a0": {
+    "mark": "␠",
+    "label": "Non-breaking space"
+  }
+}

@@ -200,16 +200,15 @@
 
                             <section class="diag-section">
                                 <h4>Special Tokens</h4>
-                                <ul class="special-tokens-list">
-                                    <li>
-                                        <span class="tok-name">&lt;|im_end|&gt;</span>
-                                        <span class="info-icon" title="&lt;|im_end|&gt; marks the end of an AI response to prevent over-generation.">ⓘ</span>
-                                    </li>
-                                    <li>
-                                        <span class="tok-name">&lt;|im_start|&gt;</span>
-                                        <span class="info-icon" title="&lt;|im_start|&gt; marks the beginning of an AI or user turn.">ⓘ</span>
-                                    </li>
-                                </ul>
+                                <section class="special-token-category" data-category="formatting" hidden>
+                                    <h5>Formatting marks</h5>
+                                    <ul class="special-tokens-list formatting-marks-list"></ul>
+                                </section>
+                                <section class="special-token-category" data-category="technical" hidden>
+                                    <h5>Technical tokens</h5>
+                                    <ul class="special-tokens-list technical-tokens-list"></ul>
+                                </section>
+                                <p class="special-tokens-placeholder">As text is generated here, new tokens appear...</p>
                             </section>
                         </section>
 

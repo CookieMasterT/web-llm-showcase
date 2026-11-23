@@ -1,12 +1,14 @@
 # AGENTS.md
 
 ## Project Overview
+
 - Web app (Vite + Vanilla JS) showcasing WebLLM for running small LLMs in the browser.
 - Supports 3 navigation views: setup (model installation), chat (the showcase), and insights (placeholder, will contain an explanation as to what is happening).
 - Includes chat messaging, token/prompt visualizations, and model download/configuration.
 - Meant for educational purposes, not as a chatbot, therefore AI inteligence itself, or usage convenience are not important, this project is meant to showcase how Generative AI works, and showcase the Inference, all self-contained in a static site, for accessibility.
 
 ## Development & Build Commands
+
 - `npm install`: Installs dependencies.
 - `npm start`: Starts the local Vite development server.
 - `npm run build`: Builds the project for production.
@@ -14,10 +16,12 @@
 - `npm run lint`: Runs the linter.
 
 ## Codebase Architecture & Key Directories
+
 - `src/`: Application source code, you will do 99% of the work in here.
 - `tests/`: Test files and test configurations.
 
 ### File Catalog
+
 - `vite.config.js`: Contains Vite configuration, entry points, CSS imports, and other build/serve settings.
 - `eslint.config.js`: ESLint configuration defining linting rules and target files; JavaScript files use LF line endings.
 - `package.json`: Contains project metadata, dependencies, and npm script commands.
@@ -41,6 +45,7 @@
 - `src/ui/modelSetup/shared.js`: Provides shared model catalog state and reusable setup UI helpers used across steps.
 - `src/ui/navigation.js`: Handles the navigation bar (on the left), and whether or not you are allowed to switch to a certain view. doesn't display anything or handle view changes itself. Exposes a function for blocking / allowing navigation from chat / insights, navigating to chat while a model does not exist shouldn't be allowed as usage will always fail and confuse the user.
 - `src/ui/tokenDiagnosticsView.js`: Contains the token diagnostics view, it is split into 2 columns, the left column contains the chosen tokens and special tokens, and the right column contains the current tokens probabilities over all tokens.
+- `src/ui/specialTokens/`: JSON catalogs for visible formatting marks and technical/special token descriptions.
 - `src/utils/probabilityMath.js`: Contains the probability math, which is used to convert the token odds given by the backend into real probabilities (accounting for temperature, and accounting for top-p to show the real probabilities of the tokens).
 - `src/utils/errorHandler.js`: Captures uncaught browser errors and promise rejections, classifies known failures into user-facing guidance (including browser-specific site-data cleanup instructions for storage errors), and displays errors in the shared notification. Unknown errors are passed through as text when available.
 - `src/utils/markdownFormatter.js`: Renders assistant responses as safe Markdown for chat display.
@@ -48,17 +53,20 @@
 - `src/utils/debug.js`: Exposes a `window.query` namespace in the browser DevTools console for querying live application state. Add new queries to the `QUERIES` map inside this file. Current commands: `query.help()`, `query.appState()`, `query.completionStatus()`.
 
 ## Agent Guidelines & Conventions
+
 - This project uses Vanilla JS, so no React, or other frontend frameworks. All UI components are built using Vanilla JS and HTML.
 - Don't use TailwindCSS, you can use the existing CSS, but don't add new Tailwind classes.
 - This project does not contain chat history, please do not hallucinate it containing chat history.
 - When adding new files, be sure to document what they do and what they are for in this file `AGENTS.md`, try to keep the style similair to the rest of this file.
 
 ### Token Diagnostics
+
 - Special tokens must be highlighted in green so they are visually distinct from ordinary tokens. In `src/style.css`, use the existing `.chosen-token-span.end-token` style for a special token in the chosen-token stream and `.special-tokens-list li.model-end-token` for its entry in the special-token list.
 - In `src/ui/tokenDiagnosticsView.js`, pass `true` as the second argument to `appendChosenTokenVisual(tokenText, true)` to apply the green chosen-token style. Use `highlightModelEndToken(tokenText)` to find or add the corresponding special-token list entry and apply its green highlight. Follow this pattern for other special tokens rather than introducing a different highlight color.
-The most notable special tokens are <|im_end|> and markdown ``` start and end.
+  The most notable special tokens are <|im_end|> and markdown ``` start and end.
 
 ### Logging
+
 - The project supports logging functionality, you can enable it by running `setDebug(true)` in the console, and disable it by running `setDebug(false)`. You can also just (temporarily) edit `src/config/constants.js` to change the default debug mode.
 - In order to add logging to any file you need to import the logger from `src/utils/logger.js` usually via `import { logger } from "../utils/logger.js";`.
 - Don't add logging to files that are not relevant to the feature you are working on. Use:

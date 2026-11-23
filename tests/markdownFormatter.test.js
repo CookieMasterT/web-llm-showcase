@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { formatAssistantMessage } from "../src/utils/markdownFormatter.js";
+import {
+  formatTokenForDisplay,
+  isSpecialTokenText,
+  isEndingToken,
+} from "../src/ui/tokenDiagnosticsView.js";
 
 test("renders Markdown and turns line endings into visible breaks", () => {
   const html = formatAssistantMessage("# Heading\n\n**Bold**\nNext line");
@@ -29,4 +34,26 @@ test("escapes raw HTML and prevents remote images from loading", () => {
   );
   assert.doesNotMatch(html, /<img|https:\/\/example\.com/);
   assert.match(html, /remote/);
+});
+
+test("formats whitespace and empty token values for diagnostics", () => {
+  assert.equal(formatTokenForDisplay(" "), "･");
+  assert.equal(formatTokenForDisplay("\n"), "¶");
+  assert.equal(formatTokenForDisplay("\t"), "⇥");
+  assert.equal(formatTokenForDisplay("; \n"), ";･¶");
+  assert.equal(formatTokenForDisplay(""), "∅");
+});
+
+test("recognizes technical and markdown special tokens", () => {
+  assert.equal(isSpecialTokenText("<|eot_id|>"), true);
+  assert.equal(isSpecialTokenText("```"), true);
+  assert.equal(isSpecialTokenText("### "), true);
+  assert.equal(isSpecialTokenText("ordinary"), false);
+});
+
+test("distinguishes ending tokens from ordinary technical tokens", () => {
+  assert.equal(isEndingToken("<|eot_id|>"), true);
+  assert.equal(isEndingToken("<|im_end|>"), true);
+  assert.equal(isEndingToken("<|im_start|>"), false);
+  assert.equal(isEndingToken("```"), false);
 });
