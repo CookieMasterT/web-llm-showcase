@@ -34,6 +34,7 @@ export async function streamingGenerating(
     );
 
     state.isStopped = false;
+    state.isResetting = false;
     state.isInferring = true;
 
     // Disable inference controls and reenable stop button.
@@ -138,23 +139,29 @@ export async function streamingGenerating(
 
     let finalMessage = "";
     if (state.isStopped) {
-      logger.debug("Generation finished after stop interruption.");
-      if (curMessage.length === 0) {
-        finalMessage =
-          "[Generation was stopped, before the model produced a response]";
+      if (state.isResetting) {
+        logger.debug("Generation finished after chat reset.");
+      } else {
+        logger.debug("Generation finished after stop interruption.");
+        finalMessage = curMessage;
       }
     } else {
       finalMessage = await engine.getMessage();
     }
 
-    onFinish(finalMessage);
+    if (!state.isResetting) {
+      onFinish(finalMessage, state.isStopped);
+    }
   } catch (err) {
     logger.error("Generation error:", err);
-    onError(err);
+    if (!state.isResetting) {
+      onError(err);
+    }
   } finally {
     // Reset UI states when finished/stopped/errored
     state.completion = null;
     state.isInferring = false;
+    state.isResetting = false;
     const tempInput = document.getElementById("temp-input");
     const toppInput = document.getElementById("topp-input");
     if (tempInput) {

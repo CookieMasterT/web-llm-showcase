@@ -2,6 +2,7 @@ import { messages } from "../state/appState.js";
 import { streamingGenerating } from "../services/chatService.js";
 import { logger } from "../utils/logger.js";
 import { reportError } from "../utils/errorHandler.js";
+import { formatAssistantMessage } from "../utils/markdownFormatter.js";
 
 export function appendMessage(message) {
   const chatBox = document.getElementById("chat-box");
@@ -9,7 +10,7 @@ export function appendMessage(message) {
   container.classList.add("message-container");
   const newMessage = document.createElement("div");
   newMessage.classList.add("message");
-  newMessage.textContent = message.content;
+  renderMessageContent(newMessage, message.content, message.role);
 
   if (message.role === "user") {
     container.classList.add("user");
@@ -22,13 +23,44 @@ export function appendMessage(message) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+function removeLastMessage() {
+  const messageDoms = document
+    .getElementById("chat-box")
+    .querySelectorAll(".message");
+  if (messageDoms.length > 0) {
+    messageDoms[messageDoms.length - 1].parentElement.remove();
+  }
+}
+
+function appendStatusMessage(content) {
+  const chatBox = document.getElementById("chat-box");
+  const status = document.createElement("div");
+  status.classList.add("chat-status-message");
+  status.setAttribute("role", "status");
+  status.textContent = content;
+  chatBox.appendChild(status);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function renderMessageContent(element, content, role) {
+  if (role === "assistant") {
+    element.innerHTML = formatAssistantMessage(content);
+    return;
+  }
+
+  element.textContent = content;
+}
+
 export function updateLastMessage(content) {
   const messageDoms = document
     .getElementById("chat-box")
     .querySelectorAll(".message");
   if (messageDoms.length > 0) {
     const lastMessageDom = messageDoms[messageDoms.length - 1];
-    lastMessageDom.textContent = content;
+    const role = lastMessageDom.parentElement.classList.contains("assistant")
+      ? "assistant"
+      : "user";
+    renderMessageContent(lastMessageDom, content, role);
   }
 }
 
@@ -63,9 +95,18 @@ export function onMessageSend() {
   // Reset Chosen Tokens box visual
   document.getElementById("chosen-tokens-display").innerHTML = "";
 
-  const onFinishGenerating = (finalMessage) => {
+  const onFinishGenerating = (finalMessage, wasStopped) => {
     logger.debug("AI response finished. Message length:", finalMessage.length);
-    updateLastMessage(finalMessage);
+    if (wasStopped) {
+      if (finalMessage.length > 0) {
+        updateLastMessage(finalMessage);
+      } else {
+        removeLastMessage();
+      }
+      appendStatusMessage("Chat response was stopped early.");
+    } else {
+      updateLastMessage(finalMessage);
+    }
     document.getElementById("send").disabled = false;
     userInput.setAttribute("placeholder", "Type a message...");
   };

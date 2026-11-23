@@ -7,6 +7,7 @@
     "start": "vite",
     "dev": "vite",
     "debug": "vite --mode debug",
+    "test": "node --test tests/*.test.js",
     "prebuild": "npm --prefix web-llm-unlocked run build",
     "build": "vite build",
     "lint": "eslint .",
@@ -22,6 +23,7 @@
     ]
   },
   "dependencies": {
+    "markdown-it": "^15.0.3",
     "web-llm-unlocked": "file:./web-llm-unlocked"
   },
   "devDependencies": {

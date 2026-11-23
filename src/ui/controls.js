@@ -39,6 +39,7 @@ export function initControls() {
   document.getElementById("reset-btn").addEventListener("click", function () {
     logger.debug("Reset triggered. Clearing messages and UI.");
     state.isStopped = true;
+    state.isResetting = true;
     state.isPaused = false;
     engine.interruptGenerate();
 
@@ -69,7 +70,7 @@ export function initControls() {
     document
       .getElementById("user-input")
       .setAttribute("placeholder", "Send a message...");
-    document.getElementById("send").disabled = false;
+    document.getElementById("send").disabled = state.isInferring;
     const tempInput = document.getElementById("temp-input");
     const toppInput = document.getElementById("topp-input");
     if (tempInput) {

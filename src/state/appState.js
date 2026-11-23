@@ -13,6 +13,7 @@ export const state = {
   isDownloading: false, // if a model is being downloaded or loaded
   isPaused: false, // if the model should pause due to the user hitting "PAUSE".
   isStopped: false, // if the model is stopping due to the user hitting "STOP", notably reset before each query.
+  isResetting: false, // if the active generation was interrupted to clear the chat.
   isInferring: false, // if the model is currently generating
   completion: null, // the current completion object
 };

@@ -10,7 +10,7 @@
 - `npm install`: Installs dependencies.
 - `npm start`: Starts the local Vite development server.
 - `npm run build`: Builds the project for production.
-- `npm run test`: Runs test suite (note that the test suite is empty right now).
+- `npm run test`: Runs test suite.
 - `npm run lint`: Runs the linter.
 
 ## Codebase Architecture & Key Directories
@@ -21,6 +21,7 @@
 - `vite.config.js`: Contains Vite configuration, entry points, CSS imports, and other build/serve settings.
 - `eslint.config.js`: ESLint configuration defining linting rules and target files; JavaScript files use LF line endings.
 - `package.json`: Contains project metadata, dependencies, and npm script commands.
+- `tests/markdownFormatter.test.js`: Regression tests for Markdown rendering, code whitespace, HTML escaping, and remote image suppression.
 - `public/assets/`: Contains SVG icons named for the model series in `src/models/model_data.json` and a `link.svg` icon. Series use LobeHub creator logos where no dedicated model-series icon is available;
 
 - `src/index.html`: The main HTML entry point for the application, contains raw HTML, import maps, and the shared user-facing error notification.
@@ -42,6 +43,7 @@
 - `src/ui/tokenDiagnosticsView.js`: Contains the token diagnostics view, it is split into 2 columns, the left column contains the chosen tokens and special tokens, and the right column contains the current tokens probabilities over all tokens.
 - `src/utils/probabilityMath.js`: Contains the probability math, which is used to convert the token odds given by the backend into real probabilities (accounting for temperature, and accounting for top-p to show the real probabilities of the tokens).
 - `src/utils/errorHandler.js`: Captures uncaught browser errors and promise rejections, classifies known failures into user-facing guidance (including browser-specific site-data cleanup instructions for storage errors), and displays errors in the shared notification. Unknown errors are passed through as text when available.
+- `src/utils/markdownFormatter.js`: Renders assistant responses as safe Markdown for chat display.
 - `src/utils/logger.js`: Contains the logic for checking whether debug is enabled and passing logged information to the console.
 - `src/utils/debug.js`: Exposes a `window.query` namespace in the browser DevTools console for querying live application state. Add new queries to the `QUERIES` map inside this file. Current commands: `query.help()`, `query.appState()`, `query.completionStatus()`.
 
